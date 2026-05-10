@@ -17,7 +17,7 @@ class PasienResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Master Data';
     protected static ?string $pluralLabel = 'Pasien';
-
+    protected static ?string $navigationLabel = 'Pasien';
     public static function form(Form $form): Form
     {
         return $form
@@ -26,31 +26,80 @@ class PasienResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('no_rkm_medis')
                             ->required()
+                            ->maxLength(15)
                             ->label('No. Rekam Medis'),
                         Forms\Components\TextInput::make('nm_pasien')
                             ->required()
+                            ->maxLength(100)
                             ->label('Nama Pasien'),
                         Forms\Components\TextInput::make('no_ktp')
+                            ->maxLength(20)
                             ->label('No. KTP'),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('tmp_lahir')
+                                    ->label('Tempat Lahir'),
+                                Forms\Components\DatePicker::make('tgl_lahir')
+                                    ->label('Tanggal Lahir'),
+                            ]),
                         Forms\Components\Select::make('jk')
-                            ->options([
-                                'L' => 'Laki-laki',
-                                'P' => 'Perempuan',
-                            ])
-                            ->required()
+                            ->options(['L' => 'Laki-laki', 'P' => 'Perempuan'])
                             ->label('Jenis Kelamin'),
-                        Forms\Components\DatePicker::make('tgl_lahir')
-                            ->label('Tanggal Lahir'),
+                        Forms\Components\TextInput::make('nm_ibu')
+                            ->required()
+                            ->label('Nama Ibu Kandung'),
+                        Forms\Components\Select::make('agama')
+                            ->options([
+                                'ISLAM' => 'ISLAM',
+                                'KRISTEN' => 'KRISTEN',
+                                'KATOLIK' => 'KATOLIK',
+                                'HINDU' => 'HINDU',
+                                'BUDHA' => 'BUDHA',
+                                'KONGHUCU' => 'KONGHUCU',
+                            ])
+                            ->label('Agama'),
+                        Forms\Components\Select::make('stts_nikah')
+                            ->options([
+                                'BELUM MENIKAH' => 'BELUM MENIKAH',
+                                'MENIKAH' => 'MENIKAH',
+                                'JANDA' => 'JANDA',
+                                'DUDA' => 'DUDA',
+                            ])
+                            ->label('Status Nikah'),
                         Forms\Components\TextInput::make('no_tlp')
                             ->tel()
                             ->label('No. Telp'),
-                        Forms\Components\TextInput::make('agama')
-                            ->label('Agama'),
-                        Forms\Components\TextInput::make('gol_darah')
-                            ->label('Gol. Darah'),
+                        Forms\Components\TextInput::make('pekerjaan')
+                            ->label('Pekerjaan'),
+                        Forms\Components\Select::make('kd_pj')
+                            ->relationship('penjab', 'png_jawab')
+                            ->label('Asuransi/Penjamin'),
                         Forms\Components\Textarea::make('alamat')
                             ->columnSpanFull()
-                            ->label('Alamat'),
+                            ->label('Alamat Lengkap'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Data Keluarga')
+                    ->schema([
+                        Forms\Components\Select::make('keluarga')
+                            ->options([
+                                'AYAH' => 'AYAH',
+                                'IBU' => 'IBU',
+                                'ISTRI' => 'ISTRI',
+                                'SUAMI' => 'SUAMI',
+                                'SAUDARA' => 'SAUDARA',
+                                'ANAK' => 'ANAK',
+                                'DIRI SENDIRI' => 'DIRI SENDIRI',
+                            ])
+                            ->label('Hubungan Keluarga'),
+                        Forms\Components\TextInput::make('namakeluarga')
+                            ->required()
+                            ->label('Nama Penanggung Jawab'),
+                        Forms\Components\TextInput::make('pekerjaanpj')
+                            ->label('Pekerjaan PJ'),
+                        Forms\Components\Textarea::make('alamatpj')
+                            ->columnSpanFull()
+                            ->label('Alamat PJ'),
                     ])->columns(2),
             ]);
     }

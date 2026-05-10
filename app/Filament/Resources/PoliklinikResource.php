@@ -17,20 +17,21 @@ class PoliklinikResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $navigationGroup = 'Master Data';
     protected static ?string $pluralLabel = 'Poliklinik';
+    protected static ?string $navigationLabel = 'Poliklinik';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::class::make('kd_poli')
+                Forms\Components\TextInput::make('kd_poli')
                     ->required()
                     ->maxLength(255)
                     ->label('Kode Poli'),
-                Forms\Components\TextInput::class::make('nm_poli')
+                Forms\Components\TextInput::make('nm_poli')
                     ->required()
                     ->maxLength(255)
                     ->label('Nama Poli'),
-                Forms\Components\Toggle::class::make('status')
+                Forms\Components\Toggle::make('status')
                     ->required()
                     ->default(true),
             ]);
@@ -40,20 +41,20 @@ class PoliklinikResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::class::make('kd_poli')->label('Kode'),
-                Tables\Columns\TextColumn::class::make('nm_poli')->label('Nama Poliklinik')->searchable(),
-                Tables\Columns\IconColumn::class::make('status')->boolean(),
+                Tables\Columns\TextColumn::make('kd_poli')->label('Kode'),
+                Tables\Columns\TextColumn::make('nm_poli')->label('Nama Poliklinik')->searchable(),
+                Tables\Columns\IconColumn::make('status')->boolean(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::class::make(),
-                Tables\Actions\DeleteAction::class::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::class::make([
-                    Tables\Actions\DeleteBulkAction::class::make(),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

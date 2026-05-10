@@ -17,12 +17,16 @@ class RegPeriksa extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'no_rawat',
-        'no_rkm_medis',
-        'kd_poli',
-        'tgl_registrasi',
-        'stts',
+        'no_reg', 'no_rawat', 'tgl_registrasi', 'jam_reg', 'kd_dokter', 
+        'no_rkm_medis', 'kd_poli', 'p_jawab', 'almt_pj', 'hubunganpj', 
+        'biaya_reg', 'stts', 'stts_daftar', 'status_lanjut', 'kd_pj', 
+        'umurdaftar', 'sttsumur', 'status_bayar', 'status_poli', 'jam_panggil'
     ];
+
+    public function penjab()
+    {
+        return $this->belongsTo(Penjab::class, 'kd_pj', 'kd_pj');
+    }
 
     protected $casts = [
         'tgl_registrasi' => 'datetime',

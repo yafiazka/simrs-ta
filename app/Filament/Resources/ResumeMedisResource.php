@@ -15,29 +15,57 @@ class ResumeMedisResource extends Resource
     protected static ?string $model = ResumeMedis::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationGroup = 'Pelayanan Klinis';
     protected static ?string $pluralLabel = 'Resume Medis';
+    protected static ?string $navigationLabel = 'Resume Medis';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('no_rawat')
-                    ->relationship('regPeriksa', 'no_rawat')
-                    ->searchable()
-                    ->preload()
-                    ->required()
-                    ->label('No. Rawat'),
-                Forms\Components\DatePicker::make('tgl_keluar')
-                    ->default(now())
-                    ->label('Tgl. Keluar'),
-                Forms\Components\Textarea::make('keluhan')
-                    ->label('Keluhan'),
-                Forms\Components\Textarea::make('pemeriksaan_fisik')
-                    ->label('Pemeriksaan Fisik'),
-                Forms\Components\Textarea::make('diagnosa')
-                    ->label('Diagnosa'),
-                Forms\Components\Textarea::make('terapi')
-                    ->label('Terapi'),
+                Forms\Components\Section::make('Informasi Kunjungan')
+                    ->schema([
+                        Forms\Components\Select::make('no_rawat')
+                            ->relationship('regPeriksa', 'no_rawat')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->label('No. Rekam Medis / Rawat'),
+                        Forms\Components\DatePicker::make('tgl_masuk')
+                            ->label('Tanggal Masuk'),
+                        Forms\Components\DatePicker::make('tgl_keluar')
+                            ->label('Tanggal Keluar'),
+                        Forms\Components\TextInput::make('kd_dokter')
+                            ->label('Nama Dokter'),
+                        Forms\Components\TextInput::make('cara_keluar')
+                            ->label('Cara Keluar Rumah Sakit'),
+                    ])->columns(2),
+
+                Forms\Components\Section::make('Detail Medis')
+                    ->schema([
+                        Forms\Components\Textarea::make('keluhan')
+                            ->label('Ringkasan Riwayat Penyakit/Anamnesa'),
+                        Forms\Components\Textarea::make('pemeriksaan_fisik')
+                            ->label('Pemeriksaan Fisik'),
+                        Forms\Components\Textarea::make('diagnosa_masuk')
+                            ->label('Diagnosa Masuk'),
+                        Forms\Components\Textarea::make('diagnosa_utama')
+                            ->label('Diagnosa Utama'),
+                        Forms\Components\Textarea::make('diagnosa_sekunder')
+                            ->label('Diagnosa Sekunder'),
+                        Forms\Components\Textarea::make('tindakan_prosedur')
+                            ->label('Tindakan/Prosedur Operasi'),
+                        Forms\Components\Textarea::make('terapi_pulang')
+                            ->label('Terapi Pulang'),
+                        Forms\Components\Textarea::make('alergi_obat')
+                            ->label('Alergi Obat'),
+                        Forms\Components\Textarea::make('kondisi_pulang')
+                            ->label('Kondisi Pasien Saat Pulang'),
+                        Forms\Components\Textarea::make('rencana_lanjut')
+                            ->label('Rencana Tidak Lanjut'),
+                        Forms\Components\Textarea::make('hasil_penunjang')
+                            ->label('Hasil Pemeriksaan Penunjang'),
+                    ])->columns(2),
             ]);
     }
 
@@ -46,21 +74,25 @@ class ResumeMedisResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('no_rawat')->label('No. Rawat')->searchable(),
-                Tables\Columns\TextColumn::make('regPeriksa.pasien.nm_pasien')->label('Pasien'),
-                Tables\Columns\TextColumn::make('tgl_keluar')->date()->label('Tgl. Keluar'),
-                Tables\Columns\TextColumn::make('diagnosa')->limit(50)->label('Diagnosa'),
+                Tables\Columns\TextColumn::make('regPeriksa.pasien.nm_pasien')->label('Pasien')->searchable(),
+                Tables\Columns\TextColumn::make('tgl_keluar')->date()->label('Tgl. Keluar')->sortable(),
+                Tables\Columns\TextColumn::make('diagnosa_utama')->limit(30)->label('Diagnosa'),
+                Tables\Columns\TextColumn::make('cara_keluar')->label('Status'),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('tgl_keluar')
+                    ->form([
+                        Forms\Components\DatePicker::make('dari_tanggal'),
+                        Forms\Components\DatePicker::make('sampai_tanggal'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when($data['dari_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '>=', $data['dari_tanggal']))
+                            ->when($data['sampai_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '<=', $data['sampai_tanggal']));
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('cetak')
-                    ->label('Cetak')
-                    ->icon('heroicon-o-printer')
-                    ->color('info')
-                    ->url(fn (ResumeMedis $record): string => route('resume.pdf', $record))
-                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

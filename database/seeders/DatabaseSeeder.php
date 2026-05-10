@@ -37,34 +37,14 @@ class DatabaseSeeder extends Seeder
             'role' => 'Dokter',
         ]);
 
-        // Initial Poliklinik
-        \App\Models\Poliklinik::create([
-            'kd_poli' => 'UMUM',
-            'nm_poli' => 'Poli Umum',
-            'status' => true,
-        ]);
-
-        \App\Models\Poliklinik::create([
-            'kd_poli' => 'GIGI',
-            'nm_poli' => 'Poli Gigi',
-            'status' => true,
-        ]);
-
-        \App\Models\Poliklinik::create([
-            'kd_poli' => 'KDG',
-            'nm_poli' => 'Poli Kandungan',
-            'status' => true,
-        ]);
-
-        // Sample Pasien
-        \App\Models\Pasien::create([
-            'no_rkm_medis' => '000001',
-            'nm_pasien' => 'Pasien Contoh',
-            'no_ktp' => '1234567890123456',
-            'jk' => 'L',
-            'tgl_lahir' => '1990-01-01',
-            'alamat' => 'Alamat Pasien',
-            'no_tlp' => '08123456789',
+        $this->call([
+            PenjabSeeder::class,
+            DokterSeeder::class,
+            PoliklinikSeeder::class,
+            KamarSeeder::class,
+            PasienSeeder::class,
+            RegPeriksaSeeder::class,
+            ResumeMedisSeeder::class,
         ]);
     }
 }

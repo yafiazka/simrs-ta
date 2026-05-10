@@ -21,7 +21,7 @@ class Poliklinik extends Model
         'status',
     ];
 
-    public function regPeriksa(): HasMany
+    public function regPeriksas(): HasMany
     {
         return $this->hasMany(RegPeriksa::class, 'kd_poli', 'kd_poli');
     }

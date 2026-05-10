@@ -9,13 +9,14 @@ class CreateResumeMedis extends CreateRecord
 {
     protected static string $resource = ResumeMedisResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
+    public function mount(): void
     {
-        // If no_rawat is passed in URL
-        if (request()->has('no_rawat')) {
-            $data['no_rawat'] = request()->query('no_rawat');
+        parent::mount();
+
+        if ($no_rawat = request()->query('no_rawat')) {
+            $this->form->fill([
+                'no_rawat' => $no_rawat,
+            ]);
         }
-        
-        return $data;
     }
 }

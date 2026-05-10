@@ -13,12 +13,11 @@ class ResumeMedis extends Model
     protected $table = 'resume_medis';
 
     protected $fillable = [
-        'no_rawat',
-        'keluhan',
-        'pemeriksaan_fisik',
-        'diagnosa',
-        'terapi',
-        'tgl_keluar',
+        'no_rawat', 'tgl_masuk', 'tgl_keluar', 'kd_dokter', 'keluhan', 
+        'pemeriksaan_fisik', 'diagnosa_masuk', 'indikasi_rawat_inap', 
+        'diagnosa_utama', 'diagnosa_sekunder', 'tindakan_prosedur', 
+        'terapi_pulang', 'alergi_obat', 'kondisi_pulang', 'rencana_lanjut', 
+        'ringkasan_riwayat', 'hasil_penunjang', 'cara_keluar'
     ];
 
     protected $casts = [

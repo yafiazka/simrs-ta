@@ -16,16 +16,17 @@ class Pasien extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'no_rkm_medis',
-        'nm_pasien',
-        'no_ktp',
-        'jk',
-        'tgl_lahir',
-        'alamat',
-        'no_tlp',
-        'agama',
-        'gol_darah',
+        'no_rkm_medis', 'nm_pasien', 'no_ktp', 'jk', 'tmp_lahir', 'tgl_lahir', 
+        'nm_ibu', 'alamat', 'gol_darah', 'pekerjaan', 'stts_nikah', 'agama', 
+        'tgl_daftar', 'no_tlp', 'umur', 'pnd', 'keluarga', 'namakeluarga', 
+        'kd_pj', 'no_peserta', 'pekerjaanpj', 'alamatpj', 'kelurahanpj', 
+        'kecamatanpj', 'kabupatenpj', 'email'
     ];
+
+    public function penjab()
+    {
+        return $this->belongsTo(Penjab::class, 'kd_pj', 'kd_pj');
+    }
 
     public function regPeriksa(): HasMany
     {

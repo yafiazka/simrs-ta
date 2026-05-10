@@ -19,7 +19,12 @@ class User extends Authenticatable implements FilamentUser
 {
     public function canAccessPanel(Panel $panel): bool
     {
-        return true; // Simplify for now, can be role-based later
+        return true;
+    }
+
+    public function getNameAttribute(): string
+    {
+        return $this->full_name;
     }
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
