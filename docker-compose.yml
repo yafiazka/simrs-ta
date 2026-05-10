@@ -32,6 +32,14 @@ services:
       timeout: 5s
       retries: 10
 
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: laravel13_tunnel
+    restart: unless-stopped
+    command: tunnel --url http://app:8000
+    depends_on:
+      - app
+
 volumes:
   db_data:
   vendor:
