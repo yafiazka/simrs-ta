@@ -23,6 +23,11 @@ class Pasien extends Model
         'kecamatanpj', 'kabupatenpj', 'email'
     ];
 
+    protected $casts = [
+        'tgl_lahir' => 'date',
+        'tgl_daftar' => 'date',
+    ];
+
     public function penjab()
     {
         return $this->belongsTo(Penjab::class, 'kd_pj', 'kd_pj');
@@ -31,5 +36,33 @@ class Pasien extends Model
     public function regPeriksa(): HasMany
     {
         return $this->hasMany(RegPeriksa::class, 'no_rkm_medis', 'no_rkm_medis');
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($pasien) {
+            // Set Tgl Daftar
+            if (!$pasien->tgl_daftar) {
+                $pasien->tgl_daftar = now()->toDateString();
+            }
+
+            // Calculate Umur
+            if ($pasien->tgl_lahir && !$pasien->umur) {
+                $birthDate = \Illuminate\Support\Carbon::parse($pasien->tgl_lahir);
+                $diff = $birthDate->diff(now());
+                $pasien->umur = $diff->y . " Th " . $diff->m . " Bl " . $diff->d . " Hr";
+            } else {
+                $pasien->umur = $pasien->umur ?: '0 Th 0 Bl 0 Hr';
+            }
+
+            // Default values for required fields
+            if (!$pasien->pnd) {
+                $pasien->pnd = '-';
+            }
+            
+            if (!$pasien->kd_pj) {
+                $pasien->kd_pj = '-';
+            }
+        });
     }
 }

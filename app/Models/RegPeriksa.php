@@ -42,9 +42,81 @@ class RegPeriksa extends Model
         return $this->belongsTo(Poliklinik::class, 'kd_poli', 'kd_poli');
     }
 
+    public function dokter(): BelongsTo
+    {
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
     public function resumeMedis(): HasOne
     {
         return $this->hasOne(ResumeMedis::class, 'no_rawat', 'no_rawat');
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($reg) {
+            // Set Jam Reg
+            if (!$reg->jam_reg) {
+                $reg->jam_reg = now()->format('H:i:s');
+            }
+
+            // Set No Reg (Antrian)
+            if (!$reg->no_reg) {
+                $lastNoReg = self::whereDate('tgl_registrasi', $reg->tgl_registrasi ?? now()->toDateString())
+                    ->where('kd_poli', $reg->kd_poli)
+                    ->max('no_reg');
+                
+                $reg->no_reg = str_pad((int)$lastNoReg + 1, 3, '0', STR_PAD_LEFT);
+            }
+
+            // Hitung Umur Daftar
+            if ($reg->no_rkm_medis) {
+                $pasien = Pasien::where('no_rkm_medis', $reg->no_rkm_medis)->first();
+                if ($pasien && $pasien->tgl_lahir) {
+                    $birthDate = \Illuminate\Support\Carbon::parse($pasien->tgl_lahir);
+                    $diff = $birthDate->diff(now());
+                    $reg->umurdaftar = $diff->y;
+                    $reg->sttsumur = 'Th';
+                    
+                    if ($diff->y == 0) {
+                        if ($diff->m > 0) {
+                            $reg->umurdaftar = $diff->m;
+                            $reg->sttsumur = 'Bl';
+                        } else {
+                            $reg->umurdaftar = $diff->d;
+                            $reg->sttsumur = 'Hr';
+                        }
+                    }
+                }
+            }
+
+            // Set PJ info from Pasien if not provided
+            if ($reg->no_rkm_medis && (!$reg->p_jawab || !$reg->almt_pj || !$reg->hubunganpj)) {
+                $pasien = Pasien::where('no_rkm_medis', $reg->no_rkm_medis)->first();
+                if ($pasien) {
+                    $reg->p_jawab = $reg->p_jawab ?: $pasien->namakeluarga;
+                    $reg->almt_pj = $reg->almt_pj ?: $pasien->alamatpj;
+                    $reg->hubunganpj = $reg->hubunganpj ?: $pasien->keluarga;
+                }
+            }
+        });
+    }
+
+    /**
+     * Use hyphenated no_rawat for routing to avoid slash issues
+     */
+    public function getRouteKey()
+    {
+        return str_replace('/', '-', $this->getAttribute($this->getRouteKeyName()));
+    }
+
+    /**
+     * Resolve hyphenated no_rawat back to original format
+     */
+    public function resolveRouteBinding($value, $field = null)
+    {
+        $value = str_replace('-', '/', $value);
+        return $this->where($field ?? $this->getRouteKeyName(), $value)->firstOrFail();
     }
 
     /**

@@ -8,4 +8,6 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateDokter extends CreateRecord
 {
     protected static string $resource = DokterResource::class;
+
+    protected static bool $canCreateAnother = false;
 }

@@ -8,13 +8,15 @@ use Filament\Widgets\ChartWidget;
 
 class PoliPasienChart extends ChartWidget
 {
-    protected static ?string $heading = 'Distribusi Pasien per Poliklinik';
+    protected static ?string $heading = '10 Poli dengan Pasien Terbanyak';
 
     protected function getData(): array
     {
         $data = RegPeriksa::join('poliklinik', 'reg_periksa.kd_poli', '=', 'poliklinik.kd_poli')
             ->selectRaw('poliklinik.nm_poli, count(*) as total')
             ->groupBy('poliklinik.nm_poli')
+            ->orderByDesc('total')
+            ->limit(10)
             ->get();
 
         return [

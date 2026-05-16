@@ -13,7 +13,7 @@ class EditPasien extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::class::make(),
+            Actions\DeleteAction::make(),
         ];
     }
 }

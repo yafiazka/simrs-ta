@@ -23,22 +23,101 @@ class ResumeMedisResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Biodata Pasien')
+                    ->description('Informasi otomatis berdasarkan No. Rawat')
+                    ->schema([
+                        Forms\Components\TextInput::make('nm_pasien')
+                            ->label('Nama Pasien')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->placeholder('Pilih No. Rawat terlebih dahulu'),
+                        Forms\Components\TextInput::make('jk_pasien')
+                            ->label('Jenis Kelamin')
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\TextInput::make('tgl_lahir_pasien')
+                            ->label('Tanggal Lahir')
+                            ->disabled()
+                            ->dehydrated(false),
+                        Forms\Components\TextInput::make('alamat_pasien')
+                            ->label('Alamat')
+                            ->disabled()
+                            ->dehydrated(false),
+                    ])->columns(2)->collapsed(),
+
                 Forms\Components\Section::make('Informasi Kunjungan')
                     ->schema([
                         Forms\Components\Select::make('no_rawat')
                             ->relationship('regPeriksa', 'no_rawat')
                             ->searchable()
                             ->preload()
+                            ->live()
+                            ->afterStateUpdated(function ($state, Forms\Set $set) {
+                                if (!$state) return;
+                                
+                                $reg = \App\Models\RegPeriksa::with('pasien')->find($state);
+                                if ($reg) {
+                                    $set('tgl_masuk', $reg->tgl_registrasi ? $reg->tgl_registrasi->format('Y-m-d') : null);
+                                    $set('kd_dokter', $reg->kd_dokter);
+                                    
+                                    // Set Biodata
+                                    if ($reg->pasien) {
+                                        $set('nm_pasien', $reg->pasien->nm_pasien);
+                                        $set('jk_pasien', $reg->pasien->jk == 'L' ? 'Laki-laki' : 'Perempuan');
+                                        $set('tgl_lahir_pasien', $reg->pasien->tgl_lahir);
+                                        $set('alamat_pasien', $reg->pasien->alamat);
+                                    }
+                                }
+                            })
+                            ->afterStateHydrated(function ($state, Forms\Set $set) {
+                                if (!$state) return;
+                                
+                                $reg = \App\Models\RegPeriksa::with('pasien')->find($state);
+                                if ($reg) {
+                                    $set('tgl_masuk', $reg->tgl_registrasi ? $reg->tgl_registrasi->format('Y-m-d') : null);
+                                    $set('kd_dokter', $reg->kd_dokter);
+                                    
+                                    if ($reg->pasien) {
+                                        $set('nm_pasien', $reg->pasien->nm_pasien);
+                                        $set('jk_pasien', $reg->pasien->jk == 'L' ? 'Laki-laki' : 'Perempuan');
+                                        $set('tgl_lahir_pasien', $reg->pasien->tgl_lahir);
+                                        $set('alamat_pasien', $reg->pasien->alamat);
+                                    }
+                                }
+                            })
+                            ->unique(null, null, fn ($record) => $record)
                             ->required()
-                            ->label('No. Rekam Medis / Rawat'),
+                            ->label('No. Rekam Medis / Rawat')
+                            ->disabled(fn () => request()->has('no_rawat'))
+                            ->dehydrated(),
                         Forms\Components\DatePicker::make('tgl_masuk')
-                            ->label('Tanggal Masuk'),
+                            ->label('Tanggal Masuk')
+                            ->disabled()
+                            ->dehydrated(),
+                        Forms\Components\Checkbox::make('pulangkan_pasien')
+                            ->label('Pulangkan Pasien')
+                            ->live()
+                            ->dehydrated(false)
+                            ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
+                                if ($record && $record->tgl_keluar) {
+                                    $set('pulangkan_pasien', true);
+                                }
+                            }),
                         Forms\Components\DatePicker::make('tgl_keluar')
-                            ->label('Tanggal Keluar'),
-                        Forms\Components\TextInput::make('kd_dokter')
-                            ->label('Nama Dokter'),
+                            ->label('Tanggal Keluar')
+                            ->visible(fn (Forms\Get $get) => $get('pulangkan_pasien'))
+                            ->required(fn (Forms\Get $get) => $get('pulangkan_pasien')),
+                        Forms\Components\Select::make('kd_dokter')
+                            ->relationship('dokter', 'nm_dokter')
+                            ->searchable()
+                            ->preload()
+                            ->label('Nama Dokter')
+                            ->disabled()
+                            ->dehydrated(),
                         Forms\Components\TextInput::make('cara_keluar')
-                            ->label('Cara Keluar Rumah Sakit'),
+                            ->label('Cara Keluar Rumah Sakit')
+                            ->visible(fn (Forms\Get $get) => $get('pulangkan_pasien'))
+                            ->required(fn (Forms\Get $get) => $get('pulangkan_pasien')),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Detail Medis')
@@ -62,7 +141,7 @@ class ResumeMedisResource extends Resource
                         Forms\Components\Textarea::make('kondisi_pulang')
                             ->label('Kondisi Pasien Saat Pulang'),
                         Forms\Components\Textarea::make('rencana_lanjut')
-                            ->label('Rencana Tidak Lanjut'),
+                            ->label('Rencana Tindak Lanjut'),
                         Forms\Components\Textarea::make('hasil_penunjang')
                             ->label('Hasil Pemeriksaan Penunjang'),
                     ])->columns(2),
@@ -75,9 +154,26 @@ class ResumeMedisResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('no_rawat')->label('No. Rawat')->searchable(),
                 Tables\Columns\TextColumn::make('regPeriksa.pasien.nm_pasien')->label('Pasien')->searchable(),
-                Tables\Columns\TextColumn::make('tgl_keluar')->date()->label('Tgl. Keluar')->sortable(),
+                Tables\Columns\TextColumn::make('tgl_keluar')
+                    ->label('Tgl. Keluar')
+                    ->formatStateUsing(fn ($state) => $state != null ? \Carbon\Carbon::parse($state)->format('M d, Y') : '-')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('diagnosa_utama')->limit(30)->label('Diagnosa'),
-                Tables\Columns\TextColumn::make('cara_keluar')->label('Status'),
+                Tables\Columns\TextColumn::make('regPeriksa.stts')
+                    ->badge()
+                    ->color(fn (?string $state): string => [
+                        'Sudah' => 'success',
+                        'Selesai' => 'success',
+                        'Belum' => 'gray',
+                        'Menunggu' => 'gray',
+                        'Berkas Diterima' => 'gray',
+                        'Batal' => 'danger',
+                        'Meninggal' => 'danger',
+                        'Pulang Paksa' => 'danger',
+                        'Dirujuk' => 'warning',
+                        'Dirawat' => 'warning',
+                    ][$state] ?? 'warning')
+                    ->label('Status Resume Medis'),
             ])
             ->filters([
                 Tables\Filters\Filter::make('tgl_keluar')
@@ -89,8 +185,19 @@ class ResumeMedisResource extends Resource
                         return $query
                             ->when($data['dari_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '>=', $data['dari_tanggal']))
                             ->when($data['sampai_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '<=', $data['sampai_tanggal']));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['dari_tanggal'] ?? null) {
+                            $indicators[] = 'Keluar Dari ' . \Illuminate\Support\Carbon::parse($data['dari_tanggal'])->format('d M Y');
+                        }
+                        if ($data['sampai_tanggal'] ?? null) {
+                            $indicators[] = 'Keluar Sampai ' . \Illuminate\Support\Carbon::parse($data['sampai_tanggal'])->format('d M Y');
+                        }
+                        return $indicators;
                     }),
             ])
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

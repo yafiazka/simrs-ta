@@ -18,19 +18,19 @@ return new class extends Migration
             $table->time('jam_reg')->nullable();
             $table->string('kd_dokter', 20)->nullable();
             $table->string('no_rkm_medis', 15)->nullable();
-            $table->char('kd_poli', 5)->nullable();
+            $table->string('kd_poli', 5)->nullable();
             $table->string('p_jawab', 100)->nullable();
             $table->string('almt_pj', 200)->nullable();
             $table->string('hubunganpj', 20)->nullable();
             $table->double('biaya_reg')->nullable();
-            $table->enum('stts', ['Belum', 'Sudah', 'Batal', 'Berkas Diterima', 'Dirujuk', 'Meninggal', 'Dirawat', 'Pulang Paksa'])->nullable();
-            $table->enum('stts_daftar', ['-', 'Lama', 'Baru']);
-            $table->enum('status_lanjut', ['Ralan', 'Ranap']);
-            $table->char('kd_pj', 3);
+            $table->enum('stts', ['Belum', 'Sudah', 'Batal', 'Berkas Diterima', 'Dirujuk', 'Meninggal', 'Dirawat', 'Pulang Paksa', 'Menunggu'])->default('Belum');
+            $table->enum('stts_daftar', ['-', 'Lama', 'Baru'])->default('-');
+            $table->enum('status_lanjut', ['Ralan', 'Ranap'])->default('Ralan');
+            $table->string('kd_pj', 3)->default('-');
             $table->integer('umurdaftar')->nullable();
-            $table->enum('sttsumur', ['Th', 'Bl', 'Hr'])->nullable();
-            $table->enum('status_bayar', ['Sudah Bayar', 'Belum Bayar']);
-            $table->enum('status_poli', ['Lama', 'Baru']);
+            $table->enum('sttsumur', ['Th', 'Bl', 'Hr'])->default('Th');
+            $table->enum('status_bayar', ['Sudah Bayar', 'Belum Bayar'])->default('Belum Bayar');
+            $table->enum('status_poli', ['Lama', 'Baru'])->default('Baru');
             $table->dateTime('jam_panggil')->nullable();
             $table->timestamps();
 

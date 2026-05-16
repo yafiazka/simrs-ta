@@ -20,6 +20,11 @@ class ResumeMedis extends Model
         'ringkasan_riwayat', 'hasil_penunjang', 'cara_keluar'
     ];
 
+    public function dokter(): BelongsTo
+    {
+        return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
     protected $casts = [
         'tgl_keluar' => 'date',
     ];
@@ -27,7 +32,11 @@ class ResumeMedis extends Model
     protected static function booted()
     {
         static::created(function ($resumeMedis) {
-            $resumeMedis->regPeriksa()->update(['stts' => 'Selesai']);
+            $resumeMedis->regPeriksa()->update(['stts' => 'Sudah']);
+        });
+
+        static::deleted(function ($resumeMedis) {
+            $resumeMedis->regPeriksa()->update(['stts' => 'Belum']);
         });
     }
 

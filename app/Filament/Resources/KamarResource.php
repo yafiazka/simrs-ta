@@ -66,10 +66,10 @@ class KamarResource extends Resource
                 Tables\Columns\TextColumn::make('trf_kamar')->money('IDR')->label('Tarif'),
                 Tables\Columns\TextColumn::make('stts')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn (string $state): string => [
                         'ISI' => 'danger',
                         'KOSONG' => 'success',
-                    })
+                    ][$state] ?? 'gray')
                     ->label('Status'),
             ])
             ->filters([
