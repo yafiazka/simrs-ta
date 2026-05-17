@@ -41,6 +41,13 @@ class Pasien extends Model
     protected static function booted()
     {
         static::creating(function ($pasien) {
+            // Generate auto-incrementing ID
+            if (empty($pasien->no_rkm_medis)) {
+                $last = self::orderBy('no_rkm_medis', 'desc')->first();
+                $lastNumber = $last ? intval($last->no_rkm_medis) : 0;
+                $pasien->no_rkm_medis = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+            }
+
             // Set Tgl Daftar
             if (!$pasien->tgl_daftar) {
                 $pasien->tgl_daftar = now()->toDateString();

@@ -23,8 +23,13 @@ class DokterResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('kd_dokter')
-                    ->required()
-                    ->maxLength(20)
+                    ->readOnly()
+                    ->dehydrated(false)
+                    ->default(function () {
+                        $last = \App\Models\Dokter::where('kd_dokter', 'like', 'D%')->orderBy('kd_dokter', 'desc')->first();
+                        $lastNumber = $last ? intval(substr($last->kd_dokter, 1)) : 0;
+                        return 'D' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+                    })
                     ->label('Kode Dokter'),
                 Forms\Components\TextInput::make('nm_dokter')
                     ->required()

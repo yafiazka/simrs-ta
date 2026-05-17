@@ -23,8 +23,13 @@ class KamarResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('kd_kamar')
-                    ->required()
-                    ->maxLength(15)
+                    ->readOnly()
+                    ->dehydrated(false)
+                    ->default(function () {
+                        $last = \App\Models\Kamar::where('kd_kamar', 'like', 'K%')->orderBy('kd_kamar', 'desc')->first();
+                        $lastNumber = $last ? intval(substr($last->kd_kamar, 1)) : 0;
+                        return 'K' . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+                    })
                     ->label('Kode Kamar'),
                 Forms\Components\TextInput::make('nm_kamar')
                     ->required()
