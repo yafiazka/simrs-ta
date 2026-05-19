@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->brandName('Sistem Informasi Rumah Sakit')
+            ->brandName(config('app.name'))
             ->colors([
                 'primary' => Color::Sky,
             ])

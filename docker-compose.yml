@@ -10,7 +10,7 @@ services:
       - ./:/var/www/html
       - vendor:/var/www/html/vendor
     ports:
-      - "8000:8000"
+      - "2408:8000"
     depends_on:
       - db
 
