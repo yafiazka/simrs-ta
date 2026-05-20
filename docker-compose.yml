@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: laravel13_app
+    container_name: simrs-ta-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -16,7 +16,7 @@ services:
 
   db:
     image: postgres:16
-    container_name: laravel13_db
+    container_name: simrs-ta-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: laravel

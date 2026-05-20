@@ -30,6 +30,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login(Login::class)
             ->brandName(config('app.name'))
+            ->brandLogo(fn () => view('filament.logo'))
+            ->favicon(asset('img/logo.png'))
             ->colors([
                 'primary' => Color::Sky,
             ])
