@@ -12,6 +12,8 @@ class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
+    protected static ?string $title = 'Dashboard';
+
     /**
      * Layout 2 kolom: StatsOverview (full) → Chart Poli | Chart Penyakit → Tabel Poli (full)
      */
