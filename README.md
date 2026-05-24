@@ -21,7 +21,8 @@ Sistem Informasi Rumah Sakit (SIMRS) berbasis web yang dikembangkan menggunakan 
    ```
 3. Jalankan migrasi dan seeder (pertama kali):
    ```bash
-   podman exec laravel13_app php artisan migrate:fresh --seed
+   podman exec simrs-ta-app php artisan migrate:fresh --seed
+   docker exec simrs-ta-app php artisan migrate:fresh --seed
    ```
 4. Akses aplikasi di: `http://localhost:8000/admin`
 

@@ -17,12 +17,23 @@ class ResumeMedis extends Model
         'pemeriksaan_fisik', 'diagnosa_masuk', 'indikasi_rawat_inap', 
         'diagnosa_utama', 'diagnosa_sekunder', 'tindakan_prosedur', 
         'terapi_pulang', 'alergi_obat', 'kondisi_pulang', 'rencana_lanjut', 
-        'ringkasan_riwayat', 'hasil_penunjang', 'cara_keluar'
+        'ringkasan_riwayat', 'hasil_penunjang', 'cara_keluar',
+        'tensi', 'tb', 'bb', 'respirasi', 'gcs', 'nadi', 'suhu', 'spo2', 'instruksi'
     ];
 
     public function dokter(): BelongsTo
     {
         return $this->belongsTo(Dokter::class, 'kd_dokter', 'kd_dokter');
+    }
+
+    public function diagnosaUtamaPenyakit(): BelongsTo
+    {
+        return $this->belongsTo(Penyakit::class, 'diagnosa_utama', 'kd_penyakit');
+    }
+
+    public function resepObats()
+    {
+        return $this->hasMany(ResepObat::class, 'resume_medis_id', 'id');
     }
 
     protected $casts = [
@@ -32,11 +43,11 @@ class ResumeMedis extends Model
     protected static function booted()
     {
         static::created(function ($resumeMedis) {
-            $resumeMedis->regPeriksa()->update(['stts' => 'Sudah']);
+            $resumeMedis->regPeriksa()->update(['stts' => 'Selesai']);
         });
 
         static::deleted(function ($resumeMedis) {
-            $resumeMedis->regPeriksa()->update(['stts' => 'Belum']);
+            $resumeMedis->regPeriksa()->update(['stts' => 'Diperiksa']);
         });
     }
 

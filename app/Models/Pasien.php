@@ -20,7 +20,8 @@ class Pasien extends Model
         'nm_ibu', 'alamat', 'gol_darah', 'pekerjaan', 'stts_nikah', 'agama', 
         'tgl_daftar', 'no_tlp', 'umur', 'pnd', 'keluarga', 'namakeluarga', 
         'kd_pj', 'no_peserta', 'pekerjaanpj', 'alamatpj', 'kelurahanpj', 
-        'kecamatanpj', 'kabupatenpj', 'email'
+        'kecamatanpj', 'kabupatenpj', 'email', 'kabupaten', 'kecamatan', 
+        'kelurahan', 'desa'
     ];
 
     protected $casts = [

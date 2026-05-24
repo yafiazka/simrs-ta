@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\KamarResource\Pages;
+namespace App\Filament\Resources\PenyakitResource\Pages;
 
-use App\Filament\Resources\KamarResource;
+use App\Filament\Resources\PenyakitResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListKamars extends ListRecords
+class ListPenyakits extends ListRecords
 {
-    protected static string $resource = KamarResource::class;
+    protected static string $resource = PenyakitResource::class;
 
     protected function getHeaderActions(): array
     {

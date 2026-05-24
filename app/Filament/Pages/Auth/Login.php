@@ -10,6 +10,11 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {
+    public function getHeading(): string
+    {
+        return 'Sistem Informasi Puskesmas';
+    }
+
     public function form(Form $form): Form
     {
         return $form

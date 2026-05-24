@@ -43,6 +43,13 @@ class DokterResource extends Resource
                     ->tel()
                     ->maxLength(20)
                     ->label('No. Telp'),
+                Forms\Components\TextInput::make('nik')
+                    ->maxLength(20)
+                    ->numeric()
+                    ->label('NIK'),
+                Forms\Components\TextInput::make('sip')
+                    ->maxLength(50)
+                    ->label('SIP'),
                 Forms\Components\Toggle::make('status')
                     ->label('Status Aktif')
                     ->default(true),
@@ -56,6 +63,8 @@ class DokterResource extends Resource
                 Tables\Columns\TextColumn::make('kd_dokter')->label('Kode'),
                 Tables\Columns\TextColumn::make('nm_dokter')->label('Nama Dokter')->searchable(),
                 Tables\Columns\TextColumn::make('spesialis')->label('Spesialis'),
+                Tables\Columns\TextColumn::make('nik')->label('NIK')->searchable(),
+                Tables\Columns\TextColumn::make('sip')->label('SIP')->searchable(),
                 Tables\Columns\IconColumn::make('status')
                     ->boolean()
                     ->label('Status'),

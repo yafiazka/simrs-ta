@@ -18,133 +18,102 @@ class ResumeMedisResource extends Resource
     protected static ?string $navigationGroup = 'Pelayanan Klinis';
     protected static ?string $pluralLabel = 'Resume Medis';
     protected static ?string $navigationLabel = 'Resume Medis';
+    protected static ?int $navigationSort = 7;
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return false;
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make('Biodata Pasien')
-                    ->description('Informasi otomatis berdasarkan No. Rawat')
                     ->schema([
-                        Forms\Components\TextInput::make('nm_pasien')
-                            ->label('Nama Pasien')
-                            ->disabled()
-                            ->dehydrated(false)
-                            ->placeholder('Pilih No. Rawat terlebih dahulu'),
-                        Forms\Components\TextInput::make('jk_pasien')
+                        Forms\Components\TextInput::make('no_rawat')
+                            ->label('No. Rawat'),
+                        Forms\Components\TextInput::make('regPeriksa.pasien.no_rkm_medis')
+                            ->label('No. Rekam Medis'),
+                        Forms\Components\TextInput::make('regPeriksa.pasien.nm_pasien')
+                            ->label('Nama Pasien'),
+                        Forms\Components\TextInput::make('regPeriksa.pasien.jk')
                             ->label('Jenis Kelamin')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('tgl_lahir_pasien')
-                            ->label('Tanggal Lahir')
-                            ->disabled()
-                            ->dehydrated(false),
-                        Forms\Components\TextInput::make('alamat_pasien')
-                            ->label('Alamat')
-                            ->disabled()
-                            ->dehydrated(false),
-                    ])->columns(2)->collapsed(),
-
-                Forms\Components\Section::make('Informasi Kunjungan')
-                    ->schema([
-                        Forms\Components\Select::make('no_rawat')
-                            ->relationship('regPeriksa', 'no_rawat')
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->afterStateUpdated(function ($state, Forms\Set $set) {
-                                if (!$state) return;
-                                
-                                $reg = \App\Models\RegPeriksa::with('pasien')->find($state);
-                                if ($reg) {
-                                    $set('tgl_masuk', $reg->tgl_registrasi ? $reg->tgl_registrasi->format('Y-m-d') : null);
-                                    $set('kd_dokter', $reg->kd_dokter);
-                                    
-                                    // Set Biodata
-                                    if ($reg->pasien) {
-                                        $set('nm_pasien', $reg->pasien->nm_pasien);
-                                        $set('jk_pasien', $reg->pasien->jk == 'L' ? 'Laki-laki' : 'Perempuan');
-                                        $set('tgl_lahir_pasien', $reg->pasien->tgl_lahir);
-                                        $set('alamat_pasien', $reg->pasien->alamat);
-                                    }
-                                }
-                            })
-                            ->afterStateHydrated(function ($state, Forms\Set $set) {
-                                if (!$state) return;
-                                
-                                $reg = \App\Models\RegPeriksa::with('pasien')->find($state);
-                                if ($reg) {
-                                    $set('tgl_masuk', $reg->tgl_registrasi ? $reg->tgl_registrasi->format('Y-m-d') : null);
-                                    $set('kd_dokter', $reg->kd_dokter);
-                                    
-                                    if ($reg->pasien) {
-                                        $set('nm_pasien', $reg->pasien->nm_pasien);
-                                        $set('jk_pasien', $reg->pasien->jk == 'L' ? 'Laki-laki' : 'Perempuan');
-                                        $set('tgl_lahir_pasien', $reg->pasien->tgl_lahir);
-                                        $set('alamat_pasien', $reg->pasien->alamat);
-                                    }
-                                }
-                            })
-                            ->unique(null, null, fn ($record) => $record)
-                            ->required()
-                            ->label('No. Rekam Medis / Rawat')
-                            ->disabled(fn () => request()->has('no_rawat'))
-                            ->dehydrated(),
-                        Forms\Components\DatePicker::make('tgl_masuk')
-                            ->label('Tanggal Masuk')
-                            ->disabled()
-                            ->dehydrated(),
-                        Forms\Components\Checkbox::make('pulangkan_pasien')
-                            ->label('Pulangkan Pasien')
-                            ->live()
-                            ->dehydrated(false)
-                            ->afterStateHydrated(function ($state, Forms\Set $set, $record) {
-                                if ($record && $record->tgl_keluar) {
-                                    $set('pulangkan_pasien', true);
-                                }
-                            }),
-                        Forms\Components\DatePicker::make('tgl_keluar')
-                            ->label('Tanggal Keluar')
-                            ->visible(fn (Forms\Get $get) => $get('pulangkan_pasien'))
-                            ->required(fn (Forms\Get $get) => $get('pulangkan_pasien')),
-                        Forms\Components\Select::make('kd_dokter')
-                            ->relationship('dokter', 'nm_dokter')
-                            ->searchable()
-                            ->preload()
-                            ->label('Nama Dokter')
-                            ->disabled()
-                            ->dehydrated(),
-                        Forms\Components\TextInput::make('cara_keluar')
-                            ->label('Cara Keluar Rumah Sakit')
-                            ->visible(fn (Forms\Get $get) => $get('pulangkan_pasien'))
-                            ->required(fn (Forms\Get $get) => $get('pulangkan_pasien')),
+                            ->formatStateUsing(fn ($state) => $state === 'L' ? 'Laki-laki' : 'Perempuan'),
+                        Forms\Components\TextInput::make('regPeriksa.pasien.alamat')
+                            ->label('Alamat'),
                     ])->columns(2),
 
-                Forms\Components\Section::make('Detail Medis')
+                Forms\Components\Section::make('Informasi Pemeriksaan')
                     ->schema([
+                        Forms\Components\Grid::make(4)
+                            ->schema([
+                                Forms\Components\TextInput::make('tensi')
+                                    ->label('Tensi'),
+                                Forms\Components\TextInput::make('nadi')
+                                    ->suffix('x/menit')
+                                    ->label('Nadi'),
+                                Forms\Components\TextInput::make('suhu')
+                                    ->suffix('°C')
+                                    ->label('Suhu'),
+                                Forms\Components\TextInput::make('spo2')
+                                    ->suffix('%')
+                                    ->label('SpO2'),
+                                Forms\Components\TextInput::make('tb')
+                                    ->suffix('cm')
+                                    ->label('Tinggi Badan (TB)'),
+                                Forms\Components\TextInput::make('bb')
+                                    ->suffix('kg')
+                                    ->label('Berat Badan (BB)'),
+                                Forms\Components\TextInput::make('respirasi')
+                                    ->suffix('x/menit')
+                                    ->label('Respirasi'),
+                                Forms\Components\TextInput::make('gcs')
+                                    ->label('GCS'),
+                                Forms\Components\TextInput::make('tgl_masuk')
+                                    ->label('Tanggal Kunjungan')
+                                    ->columnSpan(2),
+                                Forms\Components\TextInput::make('regPeriksa.dokter.nm_dokter')
+                                    ->label('Dokter DPJP')
+                                    ->columnSpan(2),
+                            ]),
                         Forms\Components\Textarea::make('keluhan')
-                            ->label('Ringkasan Riwayat Penyakit/Anamnesa'),
-                        Forms\Components\Textarea::make('pemeriksaan_fisik')
-                            ->label('Pemeriksaan Fisik'),
-                        Forms\Components\Textarea::make('diagnosa_masuk')
-                            ->label('Diagnosa Masuk'),
-                        Forms\Components\Textarea::make('diagnosa_utama')
-                            ->label('Diagnosa Utama'),
-                        Forms\Components\Textarea::make('diagnosa_sekunder')
-                            ->label('Diagnosa Sekunder'),
-                        Forms\Components\Textarea::make('tindakan_prosedur')
-                            ->label('Tindakan/Prosedur Operasi'),
-                        Forms\Components\Textarea::make('terapi_pulang')
-                            ->label('Terapi Pulang'),
-                        Forms\Components\Textarea::make('alergi_obat')
-                            ->label('Alergi Obat'),
-                        Forms\Components\Textarea::make('kondisi_pulang')
-                            ->label('Kondisi Pasien Saat Pulang'),
-                        Forms\Components\Textarea::make('rencana_lanjut')
-                            ->label('Rencana Tindak Lanjut'),
-                        Forms\Components\Textarea::make('hasil_penunjang')
-                            ->label('Hasil Pemeriksaan Penunjang'),
+                            ->label('Keluhan / Anamnesa Awal')
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('diagnosaUtamaPenyakit.nm_penyakit')
+                            ->label('Diagnosa Utama (ICD-10)'),
+                        Forms\Components\TextInput::make('cara_keluar')
+                            ->formatStateUsing(fn ($state) => $state === 'dirujuk_rs' ? 'Dirujuk ke RS' : 'Dipulangkan')
+                            ->label('Cara Dipulangkan'),
+                        Forms\Components\Textarea::make('instruksi')
+                            ->label('Instruksi Medis')
+                            ->columnSpanFull(),
                     ])->columns(2),
+
+                Forms\Components\Section::make('Resep Obat')
+                    ->schema([
+                        Forms\Components\Repeater::make('resepObats')
+                            ->relationship('resepObats')
+                            ->schema([
+                                Forms\Components\TextInput::make('nama_obat')
+                                    ->label('Nama Obat'),
+                                Forms\Components\TextInput::make('jumlah_obat')
+                                    ->label('Jumlah'),
+                                Forms\Components\TextInput::make('aturan_pakai')
+                                    ->label('Aturan Pakai'),
+                            ])
+                            ->columns(3)
+                            ->dehydrated(false)
+                            ->disabled()
+                            ->addable(false)
+                            ->deletable(false)
+                            ->reorderable(false)
+                    ])
             ]);
     }
 
@@ -152,68 +121,58 @@ class ResumeMedisResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('no_rawat')->label('No. Rawat')->searchable(),
-                Tables\Columns\TextColumn::make('regPeriksa.pasien.nm_pasien')->label('Pasien')->searchable(),
-                Tables\Columns\TextColumn::make('tgl_keluar')
-                    ->label('Tgl. Keluar')
-                    ->formatStateUsing(fn ($state) => $state != null ? \Carbon\Carbon::parse($state)->format('M d, Y') : '-')
+                Tables\Columns\TextColumn::make('no_rawat')
+                    ->label('No. Rawat')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('diagnosa_utama')->limit(30)->label('Diagnosa'),
-                Tables\Columns\TextColumn::make('regPeriksa.stts')
+                Tables\Columns\TextColumn::make('regPeriksa.pasien.nm_pasien')
+                    ->label('Nama Pasien')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tgl_masuk')
+                    ->label('Tgl Kunjungan')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('diagnosaUtamaPenyakit.nm_penyakit')
+                    ->label('Diagnosa Utama (ICD-10)')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('cara_keluar')
+                    ->label('Tindak Lanjut')
                     ->badge()
-                    ->color(fn (?string $state): string => [
-                        'Sudah' => 'success',
-                        'Selesai' => 'success',
-                        'Belum' => 'gray',
-                        'Menunggu' => 'gray',
-                        'Berkas Diterima' => 'gray',
-                        'Batal' => 'danger',
-                        'Meninggal' => 'danger',
-                        'Pulang Paksa' => 'danger',
-                        'Dirujuk' => 'warning',
-                        'Dirawat' => 'warning',
-                    ][$state] ?? 'warning')
-                    ->label('Status Resume Medis'),
+                    ->color(fn (string $state): string => $state === 'dirujuk_rs' ? 'warning' : 'success')
+                    ->formatStateUsing(fn (string $state): string => $state === 'dirujuk_rs' ? 'Dirujuk' : 'Pulang'),
             ])
             ->filters([
-                Tables\Filters\Filter::make('tgl_keluar')
+                Tables\Filters\Filter::make('tgl_masuk')
                     ->form([
                         Forms\Components\DatePicker::make('dari_tanggal'),
                         Forms\Components\DatePicker::make('sampai_tanggal'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['dari_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '>=', $data['dari_tanggal']))
-                            ->when($data['sampai_tanggal'], fn($q) => $q->whereDate('tgl_keluar', '<=', $data['sampai_tanggal']));
+                            ->when($data['dari_tanggal'], fn($q) => $q->whereDate('tgl_masuk', '>=', $data['dari_tanggal']))
+                            ->when($data['sampai_tanggal'], fn($q) => $q->whereDate('tgl_masuk', '<=', $data['sampai_tanggal']));
                     })
-                    ->indicateUsing(function (array $data): array {
-                        $indicators = [];
-                        if ($data['dari_tanggal'] ?? null) {
-                            $indicators[] = 'Keluar Dari ' . \Illuminate\Support\Carbon::parse($data['dari_tanggal'])->format('d M Y');
-                        }
-                        if ($data['sampai_tanggal'] ?? null) {
-                            $indicators[] = 'Keluar Sampai ' . \Illuminate\Support\Carbon::parse($data['sampai_tanggal'])->format('d M Y');
-                        }
-                        return $indicators;
-                    }),
             ])
-            ->defaultSort('created_at', 'desc')
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Detail Medis')
+                    ->icon('heroicon-o-eye')
+                    ->color('primary'),
+                Tables\Actions\Action::make('print')
+                    ->label('Cetak Resume')
+                    ->color('success')
+                    ->icon('heroicon-o-printer')
+                    ->url(fn (ResumeMedis $record): string => route('resume-medis.print', ['id' => $record->id]))
+                    ->openUrlInNewTab(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([])
+            ->defaultSort('tgl_masuk', 'desc');
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListResumeMedis::route('/'),
-            'create' => Pages\CreateResumeMedis::route('/create'),
-            'edit' => Pages\EditResumeMedis::route('/{record}/edit'),
         ];
     }
 }

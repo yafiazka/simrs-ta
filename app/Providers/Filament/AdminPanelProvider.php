@@ -18,8 +18,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-use App\Filament\Pages\Auth\Login;
-
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -28,17 +26,25 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login(Login::class)
             ->brandName(config('app.name'))
             ->brandLogo(fn () => view('filament.logo'))
             ->favicon(asset('img/logo.png'))
             ->colors([
-                'primary' => Color::Sky,
+                'danger' => Color::Rose,
+                'gray' => Color::Slate,
+                'info' => Color::Sky,
+                'primary' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
             ->discoverResources(app_path('Filament/Resources'), 'App\\Filament\\Resources')
             ->discoverPages(app_path('Filament/Pages'), 'App\\Filament\\Pages')
             ->pages([
-                Pages\Dashboard::class,
+                \App\Filament\Pages\Dashboard::class,
+            ])
+            ->navigationGroups([
+                'Pelayanan Klinis',
+                'Master Data',
             ])
             ->discoverWidgets(app_path('Filament/Widgets'), 'App\\Filament\\Widgets')
             ->widgets([
@@ -57,6 +63,14 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->renderHook(
+                'panels::styles.after',
+                fn () => \Illuminate\Support\Facades\Blade::render("@vite('resources/css/app.css')"),
+            )
+            ->renderHook(
+                'panels::simple.page.start',
+                fn () => view('filament.login-bg'),
+            );
     }
 }

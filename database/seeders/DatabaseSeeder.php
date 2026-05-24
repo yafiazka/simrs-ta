@@ -38,10 +38,10 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            PenyakitSeeder::class,
             PenjabSeeder::class,
             DokterSeeder::class,
             PoliklinikSeeder::class,
-            KamarSeeder::class,
             PasienSeeder::class,
             RegPeriksaSeeder::class,
             ResumeMedisSeeder::class,

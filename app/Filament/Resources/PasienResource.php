@@ -16,8 +16,9 @@ class PasienResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationGroup = 'Master Data';
-    protected static ?string $pluralLabel = 'Pasien';
-    protected static ?string $navigationLabel = 'Pasien';
+    protected static ?string $pluralLabel = 'Data Pasien';
+    protected static ?string $navigationLabel = 'Data Pasien';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -26,7 +27,7 @@ class PasienResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('no_rkm_medis')
                             ->readOnly()
-                            ->dehydrated(false)
+                            ->dehydrated(true)
                             ->default(function () {
                                 $last = \App\Models\Pasien::orderBy('no_rkm_medis', 'desc')->first();
                                 $lastNumber = $last ? intval($last->no_rkm_medis) : 0;
@@ -79,9 +80,27 @@ class PasienResource extends Resource
                         Forms\Components\Select::make('kd_pj')
                             ->relationship('penjab', 'png_jawab')
                             ->label('Asuransi/Penjamin'),
-                        Forms\Components\Textarea::make('alamat')
-                            ->columnSpanFull()
-                            ->label('Alamat Lengkap'),
+                        Forms\Components\Section::make('Detail Alamat Pasien')
+                            ->schema([
+                                Forms\Components\Grid::make(4)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('kabupaten')
+                                            ->maxLength(60)
+                                            ->label('Kabupaten/Kota'),
+                                        Forms\Components\TextInput::make('kecamatan')
+                                            ->maxLength(60)
+                                            ->label('Kecamatan'),
+                                        Forms\Components\TextInput::make('kelurahan')
+                                            ->maxLength(60)
+                                            ->label('Kelurahan'),
+                                        Forms\Components\TextInput::make('desa')
+                                            ->maxLength(60)
+                                            ->label('Desa'),
+                                    ]),
+                                Forms\Components\Textarea::make('alamat')
+                                    ->columnSpanFull()
+                                    ->label('Alamat Jalan / RT / RW'),
+                             ])->compact()->collapsible(false),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Data Keluarga')

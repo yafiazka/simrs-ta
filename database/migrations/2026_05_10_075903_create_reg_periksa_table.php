@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('almt_pj', 200)->nullable();
             $table->string('hubunganpj', 20)->nullable();
             $table->double('biaya_reg')->nullable();
-            $table->enum('stts', ['Belum', 'Sudah', 'Batal', 'Berkas Diterima', 'Dirujuk', 'Meninggal', 'Dirawat', 'Pulang Paksa', 'Menunggu'])->default('Belum');
+            $table->enum('stts', ['Belum', 'Sudah', 'Batal', 'Berkas Diterima', 'Dirujuk', 'Meninggal', 'Dirawat', 'Pulang Paksa', 'Menunggu', 'Diperiksa', 'Selesai'])->default('Belum');
             $table->enum('stts_daftar', ['-', 'Lama', 'Baru'])->default('-');
             $table->enum('status_lanjut', ['Ralan', 'Ranap'])->default('Ralan');
             $table->string('kd_pj', 3)->default('-');

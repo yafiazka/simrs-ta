@@ -8,10 +8,14 @@ use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Eloquent\Builder;
 
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+
 class PoliPasienTable extends BaseWidget
 {
-    protected static ?string $heading = 'Jumlah Pasien per Poliklinik (Hari Ini)';
-    
+    use InteractsWithPageFilters;
+
+    protected static ?string $heading = 'Jumlah Pasien per Poliklinik (Bulan/Tahun Terpilih)';
+    protected static ?int $sort = 4;
     protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
@@ -20,14 +24,17 @@ class PoliPasienTable extends BaseWidget
             ->query(
                 Poliklinik::query()
                     ->withCount(['regPeriksas' => function (Builder $query) {
-                        $query->whereDate('tgl_registrasi', now());
+                        $bulan = $this->filters['bulan'] ?? now()->format('m');
+                        $tahun = $this->filters['tahun'] ?? now()->format('Y');
+                        $query->whereMonth('tgl_registrasi', $bulan)
+                              ->whereYear('tgl_registrasi', $tahun);
                     }])
             )
             ->columns([
                 Tables\Columns\TextColumn::make('nm_poli')
                     ->label('Nama Poliklinik'),
                 Tables\Columns\TextColumn::make('reg_periksas_count')
-                    ->label('Jumlah Pasien Hari Ini')
+                    ->label('Jumlah Pasien')
                     ->badge()
                     ->color('info'),
             ])

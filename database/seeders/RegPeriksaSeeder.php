@@ -53,6 +53,8 @@ class RegPeriksaSeeder extends Seeder
                     'sttsumur' => 'Th',
                     'status_bayar' => 'Belum Bayar',
                     'status_poli' => $faker->randomElement($sttsDaftar),
+                    'diagnosa_awal' => $faker->randomElement(['Demam tinggi', 'Batuk pilek', 'Sakit kepala', 'Nyeri perut', 'Diare', 'Pusing', 'Luka robek', 'Sesak nafas']),
+                    'status_kunjungan' => $faker->randomElement(['Baru', 'Lama']),
                 ]);
             }
         }

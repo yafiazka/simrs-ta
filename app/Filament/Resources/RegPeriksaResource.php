@@ -14,6 +14,8 @@ class RegPeriksaResource extends Resource
 {
     protected static ?string $model = RegPeriksa::class;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationGroup = 'Pelayanan Klinis';
     protected static ?string $pluralLabel = 'Pendaftaran Klinis';

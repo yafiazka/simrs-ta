@@ -13,6 +13,8 @@ return new class extends Migration
             $table->string('nm_dokter', 100);
             $table->string('spesialis', 50);
             $table->string('no_telp', 20)->nullable();
+            $table->string('sip', 50)->nullable();
+            $table->string('nik', 20)->nullable();
             $table->enum('status', ['1', '0'])->default('1');
             $table->timestamps();
         });

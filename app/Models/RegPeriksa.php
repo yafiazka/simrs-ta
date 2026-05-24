@@ -20,7 +20,8 @@ class RegPeriksa extends Model
         'no_reg', 'no_rawat', 'tgl_registrasi', 'jam_reg', 'kd_dokter', 
         'no_rkm_medis', 'kd_poli', 'p_jawab', 'almt_pj', 'hubunganpj', 
         'biaya_reg', 'stts', 'stts_daftar', 'status_lanjut', 'kd_pj', 
-        'umurdaftar', 'sttsumur', 'status_bayar', 'status_poli', 'jam_panggil'
+        'umurdaftar', 'sttsumur', 'status_bayar', 'status_poli', 'jam_panggil',
+        'status_kunjungan', 'diagnosa_awal'
     ];
 
     public function penjab()

@@ -6,6 +6,602 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Inter', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 }
+
+/* ============================================================
+   🏥 SIMRS TA — Premium Medical UI System
+   Brand: Biru Medis #1565C0 | Hijau Kesehatan #2E7D32
+   ============================================================ */
+
+/* ============================================================
+   1. LOGIN PAGE — Full Immersive Medical Design
+   ============================================================ */
+
+/* Base layout: Rich teal-blue medical gradient (inspired by reference) */
+.fi-simple-layout {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(0, 188, 212, 0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 20%, rgba(21, 101, 192, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(46, 125, 50, 0.18) 0%, transparent 50%),
+        linear-gradient(145deg, #0B4C7A 0%, #0A6B72 28%, #0A7A5E 55%, #0D6040 80%, #0B4C30 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* ---- Floating Medical Bubbles ---- */
+.simrs-login-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.simrs-bubble {
+    position: absolute;
+    width: var(--sz, 100px);
+    height: var(--sz, 100px);
+    top: var(--top, 10%);
+    left: var(--left, 10%);
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.72);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.10);
+    animation: float-bubble var(--dur, 8s) ease-in-out var(--del, 0s) infinite;
+}
+
+.simrs-bubble svg {
+    width: 42%;
+    height: 42%;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+.simrs-bubble i {
+    font-size: calc(var(--sz, 100px) * 0.38) !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+@keyframes float-bubble {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    20%       { transform: translateY(-18px) rotate(4deg) scale(1.03); }
+    50%       { transform: translateY(-8px) rotate(-2deg) scale(0.98); }
+    75%       { transform: translateY(12px) rotate(3deg) scale(1.02); }
+}
+
+/* ---- ECG / Heartbeat Line ---- */
+.simrs-ecg-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+}
+
+.simrs-ecg-svg {
+    width: 100%;
+    height: 100%;
+}
+
+.simrs-ecg-line {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.55);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+    stroke-dasharray: 2800;
+    stroke-dashoffset: 2800;
+    animation: ecg-draw 5.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes ecg-draw {
+    0%   { stroke-dashoffset: 2800; opacity: 0; }
+    4%   { opacity: 0.75; }
+    68%  { stroke-dashoffset: 0; opacity: 0.75; }
+    80%  { stroke-dashoffset: 0; opacity: 0; }
+    81%  { stroke-dashoffset: 2800; opacity: 0; }
+    100% { stroke-dashoffset: 2800; opacity: 0; }
+}
+
+/* ---- Login Card — Premium Glassmorphism ---- */
+.fi-simple-main {
+    position: relative;
+    z-index: 10;
+}
+
+.fi-simple-main-card {
+    background: rgba(255, 255, 255, 0.13) !important;
+    backdrop-filter: blur(30px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.30),
+        0 2px 8px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
+    border-radius: 1.75rem !important;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+
+/* Shimmer glow border at top */
+.fi-simple-main-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(125, 228, 255, 0.9) 30%, rgba(129, 199, 132, 0.9) 70%, transparent);
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.fi-simple-main-card:hover {
+    box-shadow:
+        0 16px 60px rgba(0, 0, 0, 0.40),
+        0 4px 16px rgba(0, 188, 212, 0.18),
+        0 0 0 1px rgba(125, 228, 255, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.40),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-4px);
+}
+
+/* ---- Text & Labels on glass card ---- */
+.fi-simple-main-card .fi-fo-field-wrp label,
+.fi-simple-main-card p,
+.fi-simple-main-card h1,
+.fi-simple-main-card h2,
+.fi-simple-main-card [class*="text-gray"] {
+    color: rgba(255, 255, 255, 0.90) !important;
+}
+
+/* ---- Input fields ---- */
+.fi-simple-main-card .fi-fo-field-wrp input {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #fff !important;
+    border-radius: 0.75rem !important;
+    transition: all 0.25s ease;
+}
+
+.fi-simple-main-card .fi-fo-field-wrp input::placeholder {
+    color: rgba(255, 255, 255, 0.38) !important;
+}
+
+.fi-simple-main-card .fi-fo-field-wrp input:focus {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: rgba(125, 228, 255, 0.65) !important;
+    box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.22) !important;
+    outline: none !important;
+}
+
+/* ---- Sign In Button — teal-blue gradient ---- */
+.fi-simple-main-card .fi-btn,
+.fi-simple-main-card button[type="submit"] {
+    background: linear-gradient(135deg, #005C97 0%, #006D82 50%, #00897B 100%) !important;
+    border: none !important;
+    border-radius: 0.875rem !important;
+    box-shadow: 0 4px 18px rgba(0, 100, 140, 0.50) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.03em;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    text-transform: uppercase;
+    font-size: 0.8rem !important;
+}
+
+.fi-simple-main-card .fi-btn:hover,
+.fi-simple-main-card button[type="submit"]:hover {
+    background: linear-gradient(135deg, #00487A 0%, #005766 50%, #006E63 100%) !important;
+    box-shadow: 0 8px 28px rgba(0, 100, 140, 0.65), 0 0 0 1px rgba(125, 228, 255, 0.30) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Dark mode login */
+html.dark .fi-simple-layout {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(0, 150, 180, 0.12) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 20%, rgba(13, 60, 120, 0.20) 0%, transparent 50%),
+        linear-gradient(145deg, #051828 0%, #052E35 28%, #052A20 55%, #041A10 100%);
+}
+
+html.dark .fi-simple-main-card {
+    background: rgba(5, 20, 40, 0.60) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow:
+        0 8px 48px rgba(0, 0, 0, 0.60),
+        inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+/* ============================================================
+   2. LOGO — Logo Branding di Login (guest mode)
+   ============================================================ */
+
+/* Logo container pada login page dan sidebar */
+.fi-logo img {
+    border-radius: 6px !important;
+}
+
+
+/* Sembunyikan heading dan subheading default Filament di halaman login agar tidak terjadi penumpukan teks */
+.fi-simple-layout .fi-simple-header-heading,
+.fi-simple-layout .fi-simple-header-subheading {
+    display: none !important;
+}
+
+.fi-simple-layout .fi-simple-header {
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+}
+
+/* ============================================================
+   3. LIGHT MODE — Clean & Minimalist Medical UI
+   ============================================================ */
+
+html:not(.dark) body {
+    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 50%, #ECFDF5 100%) !important; /* Premium light medical gradient using logo colors */
+}
+
+/* Sidebar */
+html:not(.dark) .fi-sidebar {
+    background-color: #ffffff !important;
+    border-right: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 4px 0 24px rgba(15, 118, 110, 0.03) !important;
+}
+
+/* Sidebar header area */
+html:not(.dark) .fi-sidebar-header {
+    background: linear-gradient(135deg, #F0F7FF 0%, #ECFDF5 100%) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+    padding: 1.25rem !important;
+}
+
+/* Active nav item */
+html:not(.dark) .fi-sidebar-item-active > a,
+html:not(.dark) .fi-sidebar-item-active .fi-sidebar-item-button {
+    background: linear-gradient(90deg, rgba(2, 132, 199, 0.12) 0%, rgba(16, 185, 129, 0.04) 100%) !important;
+    color: #0284C7 !important; /* Medical blue */
+    border-left: 4px solid #0284C7 !important;
+    border-radius: 0 6px 6px 0 !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+
+/* Inactive nav items icon color */
+html:not(.dark) .fi-sidebar-item-icon {
+    color: #475569 !important;
+}
+
+/* Active nav item icon */
+html:not(.dark) .fi-sidebar-item-active .fi-sidebar-item-icon {
+    color: #0284C7 !important;
+}
+
+/* Nav item hover */
+html:not(.dark) .fi-sidebar-item > a:hover,
+html:not(.dark) .fi-sidebar-item .fi-sidebar-item-button:hover {
+    background-color: rgba(2, 132, 199, 0.05) !important;
+    color: #0284C7 !important;
+    border-radius: 0 6px 6px 0 !important;
+    transition: all 0.2s ease;
+}
+
+/* Topbar */
+html:not(.dark) .fi-topbar {
+    background-color: rgba(255, 255, 255, 0.80) !important;
+    backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Cards, Sections, Widgets (Premium Glassmorphism) */
+html:not(.dark) .fi-card,
+html:not(.dark) .fi-ta-content,
+html:not(.dark) .fi-section,
+html:not(.dark) .fi-wi-stats-overview-stat {
+    border: 1px solid rgba(255, 255, 255, 0.80) !important;
+    box-shadow: 0 6px 20px rgba(15, 118, 110, 0.03), 0 1px 3px rgba(0, 0, 0, 0.01) !important;
+    border-radius: 16px !important;
+    background-color: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(16px) !important;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+/* Widget/section hover lift */
+html:not(.dark) .fi-wi-stats-overview-stat:hover,
+html:not(.dark) .fi-section:hover,
+html:not(.dark) .fi-card:hover {
+    border-color: rgba(2, 132, 199, 0.30) !important;
+    box-shadow: 0 12px 28px rgba(15, 118, 110, 0.06), 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Stat cards — colored left border accent */
+html:not(.dark) .fi-wi-stats-overview-stat:nth-child(1) {
+    border-top: 3px solid #10B981 !important; /* Emerald logo green */
+}
+html:not(.dark) .fi-wi-stats-overview-stat:nth-child(2) {
+    border-top: 3px solid #0284C7 !important; /* Sky logo blue */
+}
+html:not(.dark) .fi-wi-stats-overview-stat:nth-child(3) {
+    border-top: 3px solid #F59E0B !important; /* Amber warning */
+}
+
+/* Table rows */
+html:not(.dark) .fi-ta-row {
+    transition: background-color 0.15s ease;
+}
+html:not(.dark) .fi-ta-row:hover {
+    background-color: rgba(16, 185, 129, 0.05) !important; /* Medical mint hover */
+}
+
+/* Table header tr (fixes cell cut-off on horizontal scroll) */
+html:not(.dark) thead tr {
+    background-color: rgba(224, 242, 254, 0.6) !important; /* Soft blue header bar */
+}
+
+html:not(.dark) .fi-ta-header-cell {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8) !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: #0369A1 !important; /* Medical blue header text */
+}
+
+/* Page header */
+html:not(.dark) .fi-header {
+    background-color: transparent !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+/* Primary Button / Action Button Theme */
+html:not(.dark) .fi-btn-color-primary,
+html:not(.dark) button.fi-btn-color-primary {
+    background: linear-gradient(135deg, #0284C7 0%, #10B981 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.20) !important;
+}
+
+html:not(.dark) .fi-btn-color-primary:hover,
+html:not(.dark) button.fi-btn-color-primary:hover {
+    background: linear-gradient(135deg, #0274B0 0%, #0D9F6E 100%) !important;
+    box-shadow: 0 6px 16px rgba(2, 132, 199, 0.30) !important;
+}
+
+/* Text color overrides to prevent white text leaks in Light Mode */
+html:not(.dark) .fi-header-heading,
+html:not(.dark) .fi-sidebar-item-label,
+html:not(.dark) .fi-sidebar-group-label,
+html:not(.dark) .fi-sidebar-group-label span,
+html:not(.dark) .fi-breadcrumbs-item-label,
+html:not(.dark) .fi-breadcrumbs-item a,
+html:not(.dark) .fi-breadcrumbs-item span,
+html:not(.dark) .fi-user-menu span,
+html:not(.dark) .fi-topbar-user-menu span,
+html:not(.dark) .fi-user-meta span,
+html:not(.dark) .fi-dropdown-header-title,
+html:not(.dark) .fi-dropdown-header-subtitle,
+html:not(.dark) .fi-ta-text,
+html:not(.dark) .fi-ta-text-item,
+html:not(.dark) .fi-ta-empty-state-heading,
+html:not(.dark) .fi-ta-empty-state-description,
+html:not(.dark) .fi-section-header-heading,
+html:not(.dark) .fi-section-header-description,
+html:not(.dark) .fi-fo-field-wrp-label,
+html:not(.dark) .fi-fo-field-wrp-helper-text,
+html:not(.dark) .fi-wi-stats-overview-stat-value,
+html:not(.dark) .fi-wi-stats-overview-stat-label,
+html:not(.dark) .fi-wi-stats-overview-stat-description,
+html:not(.dark) .fi-dropdown-list-item-label,
+html:not(.dark) .fi-ta-header-cell-label,
+html:not(.dark) .fi-modal-heading,
+html:not(.dark) .fi-modal-description,
+html:not(.dark) .fi-pagination-label {
+    color: #0F172A !important; /* Force readable slate color */
+}
+
+/* Inactive nav items label and icon colors in Light Mode when not hovered */
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button:not(:hover),
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button:not(:hover) span,
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > .fi-sidebar-item-button:not(:hover) svg,
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > a:not(:hover),
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > a:not(:hover) span,
+html:not(.dark) .fi-sidebar-item:not(.fi-sidebar-item-active) > a:not(:hover) svg {
+    color: #475569 !important; /* Force readable Slate-600 */
+}
+
+html:not(.dark) .fi-wi-stats-overview-stat-description,
+html:not(.dark) .fi-section-header-description,
+html:not(.dark) .fi-fo-field-wrp-helper-text,
+html:not(.dark) .fi-ta-empty-state-description,
+html:not(.dark) .fi-modal-description {
+    color: #475569 !important; /* Force slate description colors */
+}
+
+html:not(.dark) .logo-brand-title {
+    color: #0F172A !important;
+}
+html:not(.dark) .logo-brand-subtitle {
+    color: #475569 !important;
+    opacity: 0.8 !important;
+}
+html.dark .logo-brand-title {
+    color: #ffffff !important;
+}
+html.dark .logo-brand-subtitle {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+/* ============================================================
+   4. DARK MODE — Deep Navy Premium
+   ============================================================ */
+
+html.dark body {
+    background: linear-gradient(160deg, #040C1C 0%, #030E0C 50%, #030A06 100%) !important;
+}
+
+html.dark .fi-sidebar {
+    background: #071325 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.30) !important;
+}
+
+html.dark .fi-sidebar-header {
+    background: linear-gradient(135deg, #081B38 0%, #071E20 100%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+html.dark .fi-sidebar-item-active > a,
+html.dark .fi-sidebar-item-active .fi-sidebar-item-button {
+    background: linear-gradient(90deg, rgba(66, 165, 245, 0.18) 0%, rgba(66, 165, 245, 0.04) 100%) !important;
+    color: #60C8F5 !important;
+    border-left: 3px solid #42A5F5 !important;
+    border-radius: 0 0.625rem 0.625rem 0 !important;
+    font-weight: 600 !important;
+}
+
+html.dark .fi-sidebar-item > a:hover,
+html.dark .fi-sidebar-item .fi-sidebar-item-button:hover {
+    background: rgba(66, 165, 245, 0.10) !important;
+    color: #60C8F5 !important;
+    border-radius: 0 0.625rem 0.625rem 0 !important;
+}
+
+html.dark .fi-topbar {
+    background: rgba(4, 12, 28, 0.88) !important;
+    backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark .fi-card,
+html.dark .fi-ta-content,
+html.dark .fi-section,
+html.dark .fi-wi-stats-overview-stat {
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 1rem !important;
+    background: #0C1E3A !important;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+html.dark .fi-wi-stats-overview-stat:hover,
+html.dark .fi-section:hover,
+html.dark .fi-card:hover {
+    border-color: rgba(66, 165, 245, 0.28) !important;
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.40),
+        0 0 0 1px rgba(66, 165, 245, 0.12) !important;
+}
+
+html.dark .fi-wi-stats-overview-stat:nth-child(1) {
+    border-top: 3px solid #43A047 !important;
+}
+html.dark .fi-wi-stats-overview-stat:nth-child(2) {
+    border-top: 3px solid #1E88E5 !important;
+}
+html.dark .fi-wi-stats-overview-stat:nth-child(3) {
+    border-top: 3px solid #FB8C00 !important;
+}
+
+html.dark .fi-ta-row {
+    transition: background-color 0.18s ease;
+}
+html.dark .fi-ta-row:hover {
+    background-color: #112240 !important;
+}
+
+/* Dark mode table header tr */
+html.dark thead tr {
+    background-color: #0F1E36 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html.dark .fi-ta-header-cell {
+    background-color: transparent !important;
+    font-weight: 600 !important;
+    font-size: 0.7rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #60C8F5 !important;
+}
+
+/* ============================================================
+   5. CUSTOM COMPONENT STYLES
+   ============================================================ */
+
+/* Patient Info Section (Terima Pasien) */
+.pasien-info-label {
+    color: #475569 !important; /* Force Slate-600 in light mode */
+}
+html.dark .pasien-info-label {
+    color: #94A3B8 !important; /* Force Slate-400 in dark mode */
+}
+
+.pasien-info-value {
+    color: #0F172A !important; /* Force Slate-900 in light mode */
+}
+html.dark .pasien-info-value {
+    color: #F8FAFC !important; /* Force Slate-50 in dark mode */
+}
+
+.pasien-info-box {
+    background-color: #F1F5F9 !important; /* Force Slate-100 in light mode */
+    border-color: #E2E8F0 !important; /* Force Slate-200 in light mode */
+    color: #0F172A !important; /* Force Slate-900 in light mode */
+}
+html.dark .pasien-info-box {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #F8FAFC !important; /* Force Slate-50 in dark mode */
+}
+
+/* Fix z-index stacking context issues for cards, sections, or widgets containing dropdowns/inputs */
+.fi-section:focus-within,
+.fi-card:focus-within,
+.fi-ta-content:focus-within {
+    position: relative !important;
+    z-index: 30 !important;
+}
+
+/* Custom Table Styling for Laporan Puskesmas (Laporan Kelengkapan) */
+.laporan-table th {
+    color: #475569 !important; /* Force readable Slate-600 in light mode */
+}
+html.dark .laporan-table th {
+    color: #94A3B8 !important; /* Force Slate-400 in dark mode */
+}
+
+.laporan-table td {
+    color: #0F172A !important; /* Force readable Slate-900 in light mode */
+}
+html.dark .laporan-table td {
+    color: #F8FAFC !important; /* Force Slate-50 in dark mode */
+}
+
+.laporan-table tr:hover {
+    background-color: rgba(16, 185, 129, 0.05) !important; /* Soft mint on hover in light mode */
+}
+html.dark .laporan-table tr:hover {
+    background-color: #112240 !important; /* Deep navy on hover in dark mode */
+}
+
+

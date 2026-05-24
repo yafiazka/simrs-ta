@@ -16,6 +16,8 @@ class Dokter extends Model
         'nm_dokter',
         'spesialis',
         'no_telp',
+        'sip',
+        'nik',
         'status',
     ];
 
