@@ -10,7 +10,7 @@ class TenPenyakitChart extends ChartWidget
 {
     use InteractsWithPageFilters;
 
-    protected static ?string $heading = '10 Besar Penyakit (Bulan/Tahun Terpilih)';
+    protected static ?string $heading = '10 Besar Penyakit Tertinggi (Bulan/Tahun Terpilih)';
     protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 1;
     protected static ?string $maxHeight = '300px';

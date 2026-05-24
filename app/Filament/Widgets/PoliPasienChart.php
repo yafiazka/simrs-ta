@@ -11,7 +11,7 @@ class PoliPasienChart extends ChartWidget
 {
     use InteractsWithPageFilters;
 
-    protected static ?string $heading = '10 Poli dengan Pasien Terbanyak';
+    protected static ?string $heading = '10 Poli dengan Pasien Tertinggi';
     protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 1;
 
