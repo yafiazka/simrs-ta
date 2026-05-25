@@ -37,13 +37,13 @@ class DatabaseSeeder extends Seeder
             'role' => 'Dokter',
         ]);
 
-        // $this->call([
-        //     PenyakitSeeder::class,
-        //     PenjabSeeder::class,
-        //     PoliklinikSeeder::class,
-        //     PasienSeeder::class,
-        //     RegPeriksaSeeder::class,
-        //     ResumeMedisSeeder::class,
-        // ]);
+        $this->call([
+            PenyakitSeeder::class,
+            PenjabSeeder::class,
+            PoliklinikSeeder::class,
+            // PasienSeeder::class,
+            // RegPeriksaSeeder::class,
+            // ResumeMedisSeeder::class,
+        ]);
     }
 }
