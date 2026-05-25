@@ -31,7 +31,22 @@ Pilih salah satu instruksi berikut bergantung pada container engine yang Anda gu
   docker compose up -d
   ```
 
-### 3. Migrasi & Seeding Database
+### 3. Install & Build Frontend Assets (Vite)
+Jalankan perintah berikut untuk menginstall *dependencies* NPM dan mengompilasi aset *frontend*:
+
+* **Menggunakan Podman:**
+  ```bash
+  podman compose run --rm node npm install
+  podman compose run --rm node npm run build
+  ```
+
+* **Menggunakan Docker:**
+  ```bash
+  docker compose run --rm node npm install
+  docker compose run --rm node npm run build
+  ```
+
+### 4. Migrasi & Seeding Database
 Jalankan perintah berikut untuk membuat skema database dan mengisi data simulasi (seeder):
 
 * **Menggunakan Podman:**
@@ -44,7 +59,7 @@ Jalankan perintah berikut untuk membuat skema database dan mengisi data simulasi
   docker exec -it simrs-ta-app php artisan migrate:fresh --seed
   ```
 
-### 4. Akses Aplikasi
+### 5. Akses Aplikasi
 Buka browser dan akses aplikasi melalui tautan berikut:
 `http://localhost:2408/admin`
 

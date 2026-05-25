@@ -32,6 +32,16 @@ services:
       timeout: 5s
       retries: 10
 
+  node:
+    image: node:20-alpine
+    container_name: simrs-ta-node
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    tty: true
+    ports:
+      - "5173:5173"
+
 volumes:
   db_data:
   vendor:
