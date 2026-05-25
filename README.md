@@ -14,17 +14,67 @@ Sistem Informasi Rumah Sakit (SIMRS) berbasis web yang dikembangkan menggunakan 
 - Podman Compose / Docker Compose
 
 ## Cara Menjalankan
-1. Clone repositori ini.
-2. Jalankan container:
-   ```bash
-   podman compose up -d
-   ```
-3. Jalankan migrasi dan seeder (pertama kali):
-   ```bash
-   podman exec simrs-ta-app php artisan migrate:fresh --seed
-   docker exec simrs-ta-app php artisan migrate:fresh --seed
-   ```
-4. Akses aplikasi di: `http://localhost:8000/admin`
+
+### 1. Clone Repositori
+Clone proyek ini ke direktori lokal Anda.
+
+### 2. Jalankan Container
+Pilih salah satu instruksi berikut bergantung pada container engine yang Anda gunakan:
+
+* **Menggunakan Podman:**
+  ```bash
+  podman compose up -d
+  ```
+
+* **Menggunakan Docker:**
+  ```bash
+  docker compose up -d
+  ```
+
+### 3. Migrasi & Seeding Database
+Jalankan perintah berikut untuk membuat skema database dan mengisi data simulasi (seeder):
+
+* **Menggunakan Podman:**
+  ```bash
+  podman exec -it simrs-ta-app php artisan migrate:fresh --seed
+  ```
+
+* **Menggunakan Docker:**
+  ```bash
+  docker exec -it simrs-ta-app php artisan migrate:fresh --seed
+  ```
+
+### 4. Akses Aplikasi
+Buka browser dan akses aplikasi melalui tautan berikut:
+`http://localhost:2408/admin`
+
+---
+
+## Akses Database
+
+Kontainer database menggunakan PostgreSQL 16. Anda dapat terhubung ke database menggunakan CLI atau aplikasi database client GUI (DBeaver, TablePlus, pgAdmin, dll.).
+
+### Kredensial Koneksi
+* **Host**: `localhost` atau `127.0.0.1`
+* **Port**: `5432`
+* **Database**: `laravel`
+* **Username**: `root`
+* **Password**: `root123`
+
+### Akses via CLI (psql)
+Jika Anda ingin masuk ke terminal interaktif psql langsung di dalam kontainer database:
+
+* **Menggunakan Podman:**
+  ```bash
+  podman exec -it simrs-ta-db psql -U root -d laravel
+  ```
+
+* **Menggunakan Docker:**
+  ```bash
+  docker exec -it simrs-ta-db psql -U root -d laravel
+  ```
+
+---
 
 ## Akun Akses
 Aplikasi ini memiliki beberapa role akses untuk simulasi berbagai departemen:
@@ -39,4 +89,4 @@ Aplikasi ini memiliki beberapa role akses untuk simulasi berbagai departemen:
 - **Backend**: Laravel 12 (PHP 8.4)
 - **Frontend**: Filament v3 (TALL Stack)
 - **Database**: PostgreSQL 16
-- **Container**: Podman
+- **Container**: Podman / Docker
