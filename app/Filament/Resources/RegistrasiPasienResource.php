@@ -99,6 +99,39 @@ class RegistrasiPasienResource extends Resource
                     ->columnSpanFull()
                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateRegistrasiPasien),
 
+                Forms\Components\Section::make('Registrasi Kunjungan Poliklinik')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('status_kunjungan')
+                                    ->options([
+                                        'Baru' => 'Pasien Baru',
+                                        'Lama' => 'Pasien Lama',
+                                    ])
+                                    ->default('Baru')
+                                    ->required()
+                                    ->label('Status Kunjungan'),
+                                Forms\Components\Select::make('kd_pj_reg')
+                                    ->options(\App\Models\Penjab::pluck('png_jawab', 'kd_pj'))
+                                    ->required()
+                                    ->label('Pilihan Pembayaran / Cara Bayar'),
+                                Forms\Components\Select::make('kd_poli')
+                                    ->options(\App\Models\Poliklinik::where('status', true)->pluck('nm_poli', 'kd_poli'))
+                                    ->required()
+                                    ->label('Poliklinik Tujuan'),
+                                Forms\Components\Select::make('kd_dokter')
+                                    ->options(\App\Models\Dokter::pluck('nm_dokter', 'kd_dokter'))
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->label('Dokter DPJP'),
+                            ]),
+                        Forms\Components\TextInput::make('diagnosa_awal')
+                            ->label('Keluhan / Diagnosa Awal')
+                            ->required()
+                            ->columnSpanFull(),
+                    ]),
+
                 Forms\Components\Section::make('Identitas Pasien')
                     ->schema([
                         Forms\Components\TextInput::make('no_rkm_medis')
@@ -201,39 +234,6 @@ class RegistrasiPasienResource extends Resource
                             ->columnSpanFull()
                             ->label('Alamat PJ'),
                     ])->columns(2),
-
-                Forms\Components\Section::make('Registrasi Kunjungan Poliklinik')
-                    ->schema([
-                        Forms\Components\Grid::make(2)
-                            ->schema([
-                                Forms\Components\Select::make('status_kunjungan')
-                                    ->options([
-                                        'Baru' => 'Pasien Baru',
-                                        'Lama' => 'Pasien Lama',
-                                    ])
-                                    ->default('Baru')
-                                    ->required()
-                                    ->label('Status Kunjungan'),
-                                Forms\Components\Select::make('kd_pj_reg')
-                                    ->options(\App\Models\Penjab::pluck('png_jawab', 'kd_pj'))
-                                    ->required()
-                                    ->label('Pilihan Pembayaran / Cara Bayar'),
-                                Forms\Components\Select::make('kd_poli')
-                                    ->options(\App\Models\Poliklinik::whereIn('kd_poli', ['UMUM', 'GIGI', 'KIA', 'MTBS'])->pluck('nm_poli', 'kd_poli'))
-                                    ->required()
-                                    ->label('Poliklinik Tujuan'),
-                                Forms\Components\Select::make('kd_dokter')
-                                    ->options(\App\Models\Dokter::pluck('nm_dokter', 'kd_dokter'))
-                                    ->searchable()
-                                    ->preload()
-                                    ->required()
-                                    ->label('Dokter DPJP'),
-                            ]),
-                        Forms\Components\TextInput::make('diagnosa_awal')
-                            ->label('Keluhan / Diagnosa Awal')
-                            ->required()
-                            ->columnSpanFull(),
-                    ]),
             ]);
     }
 
@@ -272,7 +272,7 @@ class RegistrasiPasienResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    // Disable bulk delete on patients
                 ]),
             ]);
     }

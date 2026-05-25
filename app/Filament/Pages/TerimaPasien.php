@@ -143,8 +143,7 @@ class TerimaPasien extends Page implements HasForms
                                 TextInput::make('gcs')
                                     ->label('GCS (E, V, M)')
                                     ->placeholder('Contoh: E4V5M6')
-                                    ->default('E4V5M6')
-                                    ->required(),
+                                    ->default('-'),
                             ])
                             ->columns([
                                 'default' => 1,
@@ -177,9 +176,7 @@ class TerimaPasien extends Page implements HasForms
                             ])
                             ->label('Cara Dipulangkan (Ketik / Pilih)'),
                         DatePicker::make('tgl_keluar')
-                            ->label('Tanggal Pulang')
-                            ->native(false)
-                            ->displayFormat('d/m/Y'),
+                            ->label('Tanggal Pulang'),
                     ])->columns(3),
 
                 Section::make('Resep Obat & Instruksi Medis')

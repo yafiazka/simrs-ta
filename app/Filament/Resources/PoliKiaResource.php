@@ -105,10 +105,10 @@ class PoliKiaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\Action::make('terima_pasien')
-                    ->label('Terima Pasien')
-                    ->color('success')
+                    ->label(fn (RegPeriksa $record) => $record->stts === 'Selesai' ? 'Edit Pemeriksaan' : 'Terima Pasien')
+                    ->color(fn (RegPeriksa $record) => $record->stts === 'Selesai' ? 'warning' : 'success')
                     ->icon('heroicon-o-check-circle')
-                    ->visible(fn (RegPeriksa $record) => in_array($record->stts, ['Menunggu', 'Belum', 'Diperiksa']))
+                    ->visible(fn (RegPeriksa $record) => in_array($record->stts, ['Menunggu', 'Belum', 'Diperiksa', 'Selesai']))
                     ->url(fn (RegPeriksa $record) => "/admin/terima-pasien/" . str_replace('/', '-', $record->no_rawat))
             ])
             ->bulkActions([])

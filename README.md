@@ -23,12 +23,12 @@ Pilih salah satu instruksi berikut bergantung pada container engine yang Anda gu
 
 * **Menggunakan Podman:**
   ```bash
-  podman compose up -d
+  podman compose up -d --build
   ```
 
 * **Menggunakan Docker:**
   ```bash
-  docker compose up -d
+  docker compose up -d --build
   ```
 
 ### 3. Install & Build Frontend Assets (Vite)

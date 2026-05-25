@@ -30,6 +30,11 @@ class ResumeMedisResource extends Resource
         return false;
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['regPeriksa.pasien', 'dokter', 'diagnosaUtamaPenyakit']);
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,15 +43,28 @@ class ResumeMedisResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('no_rawat')
                             ->label('No. Rawat'),
-                        Forms\Components\TextInput::make('regPeriksa.pasien.no_rkm_medis')
-                            ->label('No. Rekam Medis'),
-                        Forms\Components\TextInput::make('regPeriksa.pasien.nm_pasien')
-                            ->label('Nama Pasien'),
-                        Forms\Components\TextInput::make('regPeriksa.pasien.jk')
+                        Forms\Components\TextInput::make('no_rkm_medis')
+                            ->label('No. Rekam Medis')
+                            ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                ($record && $record->regPeriksa && $record->regPeriksa->pasien) ? $record->regPeriksa->pasien->no_rkm_medis : null
+                            )),
+                        Forms\Components\TextInput::make('nm_pasien')
+                            ->label('Nama Pasien')
+                            ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                ($record && $record->regPeriksa && $record->regPeriksa->pasien) ? $record->regPeriksa->pasien->nm_pasien : null
+                            )),
+                        Forms\Components\TextInput::make('jk')
                             ->label('Jenis Kelamin')
-                            ->formatStateUsing(fn ($state) => $state === 'L' ? 'Laki-laki' : 'Perempuan'),
-                        Forms\Components\TextInput::make('regPeriksa.pasien.alamat')
-                            ->label('Alamat'),
+                            ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                ($record && $record->regPeriksa && $record->regPeriksa->pasien) 
+                                    ? ($record->regPeriksa->pasien->jk === 'L' ? 'Laki-laki' : ($record->regPeriksa->pasien->jk === 'P' ? 'Perempuan' : '-')) 
+                                    : '-'
+                            )),
+                        Forms\Components\TextInput::make('alamat')
+                            ->label('Alamat')
+                            ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                ($record && $record->regPeriksa && $record->regPeriksa->pasien) ? $record->regPeriksa->pasien->alamat : null
+                            )),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Informasi Pemeriksaan')
@@ -77,18 +95,34 @@ class ResumeMedisResource extends Resource
                                     ->label('GCS'),
                                 Forms\Components\TextInput::make('tgl_masuk')
                                     ->label('Tanggal Kunjungan')
-                                    ->columnSpan(2),
-                                Forms\Components\TextInput::make('regPeriksa.dokter.nm_dokter')
+                                    ->columnSpan(2)
+                                    ->afterStateHydrated(fn ($component, $state) => $component->state(
+                                        $state ? \Illuminate\Support\Carbon::parse($state)->format('d-m-Y') : null
+                                    )),
+                                Forms\Components\TextInput::make('tgl_keluar')
+                                    ->label('Tanggal Pulang')
+                                    ->columnSpan(2)
+                                    ->afterStateHydrated(fn ($component, $state) => $component->state(
+                                        $state ? \Illuminate\Support\Carbon::parse($state)->format('d-m-Y') : null
+                                    )),
+                                Forms\Components\TextInput::make('nm_dokter')
                                     ->label('Dokter DPJP')
-                                    ->columnSpan(2),
+                                    ->columnSpan(2)
+                                    ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                        ($record && $record->dokter) ? $record->dokter->nm_dokter : null
+                                    )),
                             ]),
                         Forms\Components\Textarea::make('keluhan')
                             ->label('Keluhan / Anamnesa Awal')
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('diagnosaUtamaPenyakit.nm_penyakit')
-                            ->label('Diagnosa Utama (ICD-10)'),
+                        Forms\Components\TextInput::make('diagnosa_utama')
+                            ->label('Diagnosa Utama (ICD-10)')
+                            ->afterStateHydrated(fn ($component, $record) => $component->state(
+                                $record && $record->diagnosaUtamaPenyakit 
+                                    ? '[' . $record->diagnosa_utama . '] ' . $record->diagnosaUtamaPenyakit->nm_penyakit 
+                                    : ($record ? $record->diagnosa_utama : null)
+                            )),
                         Forms\Components\TextInput::make('cara_keluar')
-                            ->formatStateUsing(fn ($state) => $state === 'dirujuk_rs' ? 'Dirujuk ke RS' : 'Dipulangkan')
                             ->label('Cara Dipulangkan'),
                         Forms\Components\Textarea::make('instruksi')
                             ->label('Instruksi Medis')
@@ -99,6 +133,7 @@ class ResumeMedisResource extends Resource
                     ->schema([
                         Forms\Components\Repeater::make('resepObats')
                             ->relationship('resepObats')
+                            ->label('Resep Obat')
                             ->schema([
                                 Forms\Components\TextInput::make('nama_obat')
                                     ->label('Nama Obat'),
@@ -138,14 +173,15 @@ class ResumeMedisResource extends Resource
                 Tables\Columns\TextColumn::make('cara_keluar')
                     ->label('Tindak Lanjut')
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'dirujuk_rs' ? 'warning' : 'success')
-                    ->formatStateUsing(fn (string $state): string => $state === 'dirujuk_rs' ? 'Dirujuk' : 'Pulang'),
+                    ->color(fn (string $state): string => $state === 'Dirujuk ke RS' ? 'warning' : 'success'),
             ])
             ->filters([
                 Tables\Filters\Filter::make('tgl_masuk')
                     ->form([
-                        Forms\Components\DatePicker::make('dari_tanggal'),
-                        Forms\Components\DatePicker::make('sampai_tanggal'),
+                        Forms\Components\DatePicker::make('dari_tanggal')
+                            ->label('Dari Tanggal'),
+                        Forms\Components\DatePicker::make('sampai_tanggal')
+                            ->label('Sampai Tanggal'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query

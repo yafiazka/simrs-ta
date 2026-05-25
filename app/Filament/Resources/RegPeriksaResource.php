@@ -153,7 +153,9 @@ class RegPeriksaResource extends Resource
                     ->icon('heroicon-o-pencil-square')
                     ->url(fn (RegPeriksa $record): string => ResumeMedisResource::getUrl('create', ['no_rawat' => $record->no_rawat]))
                     ->visible(fn (RegPeriksa $record) => !$record->resumeMedis()->exists()),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn (RegPeriksa $record) => $record->stts !== 'Selesai'),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
