@@ -23,7 +23,7 @@ Pilih salah satu instruksi berikut bergantung pada container engine yang Anda gu
 
 * **Menggunakan Podman:**
   ```bash
-  podman compose up -d --build
+  podman-compose up -d --build
   ```
 
 * **Menggunakan Docker:**
@@ -36,8 +36,8 @@ Jalankan perintah berikut untuk menginstall *dependencies* NPM dan mengompilasi 
 
 * **Menggunakan Podman:**
   ```bash
-  podman compose run --rm node npm install
-  podman compose run --rm node npm run build
+  podman-compose run --rm node npm install
+  podman-compose run --rm node npm run build
   ```
 
 * **Menggunakan Docker:**
@@ -112,34 +112,34 @@ Jika terdapat pembaruan kode sumber, perubahan file `Dockerfile`, dependensi di 
 
 * **Menggunakan Podman:**
   ```bash
-  # 1. Matikan kontainer yang sedang berjalan
-  podman compose down
+  # 1. Hentikan kontainer dan HAPUS total volume cache (database & vendor)
+  podman-compose down -v
 
   # 2. Bangun ulang image dan jalankan kontainer baru
-  podman compose up -d --build
+  podman-compose up -d --build
 
-  # 3. Update & compile ulang aset frontend (jika ada perubahan package/CSS/JS)
-  podman compose run --rm node npm install
-  podman compose run --rm node npm run build
+  # 3. Update & compile ulang aset frontend
+  podman-compose run --rm node npm install
+  podman-compose run --rm node npm run build
 
-  # 4. Jalankan migrasi database (jika ada perubahan skema database baru)
-  podman exec -it simrs-ta-app php artisan migrate
+  # 4. Jalankan migrasi database baru dan seeding
+  podman exec -it simrs-ta-app php artisan migrate:fresh --seed
   ```
 
 * **Menggunakan Docker:**
   ```bash
-  # 1. Matikan kontainer yang sedang berjalan
-  docker compose down
+  # 1. Hentikan kontainer dan HAPUS total volume cache (database & vendor)
+  docker compose down -v
 
   # 2. Bangun ulang image dan jalankan kontainer baru
   docker compose up -d --build
 
-  # 3. Update & compile ulang aset frontend (jika ada perubahan package/CSS/JS)
+  # 3. Update & compile ulang aset frontend
   docker compose run --rm node npm install
   docker compose run --rm node npm run build
 
-  # 4. Jalankan migrasi database (jika ada perubahan skema database baru)
-  docker exec -it simrs-ta-app php artisan migrate
+  # 4. Jalankan migrasi database baru dan seeding
+  docker exec -it simrs-ta-app php artisan migrate:fresh --seed
   ```
 
 ## Teknologi

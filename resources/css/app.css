@@ -604,4 +604,43 @@ html.dark .laporan-table tr:hover {
     background-color: #112240 !important; /* Deep navy on hover in dark mode */
 }
 
+/* ============================================================
+   6. FILAMENT TOGGLE SWITCH ALIGNMENT FIX (Tailwind v4 Patch)
+   ============================================================ */
+button.fi-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    position: relative !important;
+    width: 2.75rem !important; /* 44px (w-11) */
+    height: 1.5rem !important; /* 24px (h-6) */
+    border-radius: 9999px !important;
+    padding: 0.125rem !important; /* 2px */
+    transition: background-color 0.2s !important;
+}
+
+button.fi-toggle > div {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    width: 1.25rem !important; /* 20px (w-5) */
+    height: 1.25rem !important; /* 20px (h-5) */
+    border-radius: 9999px !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transform: none !important;
+    translate: 0 0 !important;
+}
+
+button.fi-toggle-on > div {
+    transform: translateX(1.25rem) !important; /* Translate by 20px */
+    translate: none !important;
+}
+
+html[dir="rtl"] button.fi-toggle-on > div {
+    transform: translateX(-1.25rem) !important;
+    translate: none !important;
+}
+
 
