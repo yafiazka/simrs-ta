@@ -84,8 +84,25 @@
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-white">{{ $row->resumeMedis && $row->resumeMedis->tgl_keluar ? $row->resumeMedis->tgl_keluar->format('d/m/Y') : '-' }}</td>
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-white">
                                     @if($row->resumeMedis)
-                                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {{ $row->resumeMedis->cara_keluar === 'dirujuk_rs' ? 'bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-400' }}">
-                                            {{ $row->resumeMedis->cara_keluar === 'dirujuk_rs' ? 'Dirujuk' : 'Pulang' }}
+                                        @php
+                                            $caraKeluar = $row->resumeMedis->cara_keluar;
+                                            $labelMap = [
+                                                'dipulangkan'  => 'Dipulangkan',
+                                                'dirujuk_rs'   => 'Dirujuk ke RS',
+                                                'meninggal'    => 'Meninggal',
+                                                'pulang_paksa' => 'Pulang Paksa / APS',
+                                            ];
+                                            $colorMap = [
+                                                'dipulangkan'  => 'bg-emerald-50 text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-400',
+                                                'dirujuk_rs'   => 'bg-amber-50 text-amber-700 dark:bg-amber-400/10 dark:text-amber-400',
+                                                'meninggal'    => 'bg-red-50 text-red-700 dark:bg-red-400/10 dark:text-red-400',
+                                                'pulang_paksa' => 'bg-gray-100 text-gray-700 dark:bg-gray-400/10 dark:text-gray-400',
+                                            ];
+                                            $label = $labelMap[$caraKeluar] ?? ($caraKeluar ?? '-');
+                                            $color = $colorMap[$caraKeluar] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-400/10 dark:text-gray-400';
+                                        @endphp
+                                        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium {{ $color }}">
+                                            {{ $label }}
                                         </span>
                                     @else
                                         -

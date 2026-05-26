@@ -100,6 +100,48 @@ Aplikasi ini memiliki beberapa role akses untuk simulasi berbagai departemen:
 | **Perawat** | `perawat` | `password` | Akses untuk pendaftaran dan manajemen pasien. |
 | **Dokter** | `dokter` | `password` | Akses untuk pengisian resume medis. |
 
+## Informasi Penting & Pemeliharaan
+
+### 1. Kemandirian Lingkungan (Self-Contained Container)
+Seluruh dependensi sistem dan library (seperti **PhpSpreadsheet** untuk export Excel dan **SimpleSoftwareIO QrCode** untuk cetak QR) beserta seluruh ekstensi PHP yang dibutuhkan (`gd`, `zip`, `xml`, `mbstring`, `bcmath`, `intl`) **berjalan sepenuhnya di dalam kontainer**. 
+
+Anda **TIDAK PERLU** menginstall PHP, Composer, Node.js, atau ekstensi-ekstensi sistem tersebut pada OS komputer lokal (host) Anda. Semua proses eksekusi dan pustaka perangkat lunak telah diwadahi secara mandiri di dalam kontainer Podman/Docker.
+
+### 2. Cara Update Aplikasi & Rebuild Container
+Jika terdapat pembaruan kode sumber, perubahan file `Dockerfile`, dependensi di `composer.json` / `package.json`, lakukan langkah-langkah pembaruan berikut:
+
+* **Menggunakan Podman:**
+  ```bash
+  # 1. Matikan kontainer yang sedang berjalan
+  podman compose down
+
+  # 2. Bangun ulang image dan jalankan kontainer baru
+  podman compose up -d --build
+
+  # 3. Update & compile ulang aset frontend (jika ada perubahan package/CSS/JS)
+  podman compose run --rm node npm install
+  podman compose run --rm node npm run build
+
+  # 4. Jalankan migrasi database (jika ada perubahan skema database baru)
+  podman exec -it simrs-ta-app php artisan migrate
+  ```
+
+* **Menggunakan Docker:**
+  ```bash
+  # 1. Matikan kontainer yang sedang berjalan
+  docker compose down
+
+  # 2. Bangun ulang image dan jalankan kontainer baru
+  docker compose up -d --build
+
+  # 3. Update & compile ulang aset frontend (jika ada perubahan package/CSS/JS)
+  docker compose run --rm node npm install
+  docker compose run --rm node npm run build
+
+  # 4. Jalankan migrasi database (jika ada perubahan skema database baru)
+  docker exec -it simrs-ta-app php artisan migrate
+  ```
+
 ## Teknologi
 - **Backend**: Laravel 12 (PHP 8.4)
 - **Frontend**: Filament v3 (TALL Stack)

@@ -169,12 +169,16 @@ class TerimaPasien extends Page implements HasForms
                             })
                             ->getOptionLabelUsing(fn ($value): ?string => ($penyakit = Penyakit::find($value)) ? "[{$penyakit->kd_penyakit}] {$penyakit->nm_penyakit}" : null),
                         
-                        TextInput::make('cara_keluar')
-                            ->datalist([
-                                'Dipulangkan',
-                                'Dirujuk ke RS',
+                        Select::make('cara_keluar')
+                            ->label('Cara Dipulangkan')
+                            ->options([
+                                'dipulangkan'  => 'Dipulangkan',
+                                'dirujuk_rs'   => 'Dirujuk ke RS',
+                                'meninggal'    => 'Meninggal',
+                                'pulang_paksa' => 'Pulang Paksa / APS',
                             ])
-                            ->label('Cara Dipulangkan (Ketik / Pilih)'),
+                            ->required()
+                            ->default('dipulangkan'),
                         DatePicker::make('tgl_keluar')
                             ->label('Tanggal Pulang'),
                     ])->columns(3),

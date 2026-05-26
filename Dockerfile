@@ -11,8 +11,10 @@ RUN apt-get update \
         libpng-dev \
         libjpeg-dev \
         libfreetype6-dev \
+        libxml2-dev \
+        libonig-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_mysql pdo_pgsql bcmath intl zip gd \
+    && docker-php-ext-install pdo_mysql pdo_pgsql bcmath intl zip gd mbstring xml \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

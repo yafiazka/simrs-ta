@@ -41,6 +41,7 @@ class DatabaseSeeder extends Seeder
             PenyakitSeeder::class,
             PenjabSeeder::class,
             PoliklinikSeeder::class,
+            // DokterSeeder::class,
             // PasienSeeder::class,
             // RegPeriksaSeeder::class,
             // ResumeMedisSeeder::class,

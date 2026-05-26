@@ -34,7 +34,7 @@ return new class extends Migration
             $table->dateTime('jam_panggil')->nullable();
             $table->timestamps();
 
-            $table->foreign('no_rkm_medis')->references('no_rkm_medis')->on('pasien')->onUpdate('cascade');
+            $table->foreign('no_rkm_medis')->references('no_rkm_medis')->on('pasien')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('kd_poli')->references('kd_poli')->on('poliklinik')->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('kd_pj')->references('kd_pj')->on('penjab')->onUpdate('cascade');
             

@@ -178,7 +178,15 @@ class LaporanKelengkapan extends Page implements HasForms
             $desa = $row->pasien?->kelurahan ?? $row->pasien?->desa ?? '-';
             $tgl_masuk = $row->tgl_registrasi ? $row->tgl_registrasi->format('d/m/Y') : '-';
             $tgl_pulang = $row->resumeMedis && $row->resumeMedis->tgl_keluar ? $row->resumeMedis->tgl_keluar->format('d/m/Y') : '-';
-            $cara_pulang = $row->resumeMedis ? ($row->resumeMedis->cara_keluar === 'dirujuk_rs' ? 'Dirujuk' : 'Pulang') : '-';
+            $cara_pulang_map = [
+                'dipulangkan'  => 'Dipulangkan',
+                'dirujuk_rs'   => 'Dirujuk ke RS',
+                'meninggal'    => 'Meninggal',
+                'pulang_paksa' => 'Pulang Paksa / APS',
+            ];
+            $cara_pulang = $row->resumeMedis
+                ? ($cara_pulang_map[$row->resumeMedis->cara_keluar] ?? $row->resumeMedis->cara_keluar ?? '-')
+                : '-';
 
             $sheet->setCellValue('A' . $rowNum, $index + 1);
             $sheet->setCellValue('B' . $rowNum, $row->poliklinik?->nm_poli ?? '-');

@@ -109,7 +109,10 @@ class PoliUmumResource extends Resource
                     ->color(fn (RegPeriksa $record) => $record->stts === 'Selesai' ? 'warning' : 'success')
                     ->icon('heroicon-o-check-circle')
                     ->visible(fn (RegPeriksa $record) => in_array($record->stts, ['Menunggu', 'Belum', 'Diperiksa', 'Selesai']))
-                    ->url(fn (RegPeriksa $record) => "/admin/terima-pasien/" . str_replace('/', '-', $record->no_rawat))
+                    ->url(fn (RegPeriksa $record) => "/admin/terima-pasien/" . str_replace('/', '-', $record->no_rawat)),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus')
+                    ->icon('heroicon-o-trash'),
             ])
             ->bulkActions([])
             ->defaultSort('no_reg', 'asc');
