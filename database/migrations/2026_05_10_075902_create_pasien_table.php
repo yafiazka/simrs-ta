@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('email', 50)->nullable();
             $table->timestamps();
 
-            $table->foreign('kd_pj')->references('kd_pj')->on('penjab')->onUpdate('cascade');
+            $table->foreign('kd_pj')->references('kd_pj')->on('penjab')->onUpdate('cascade')->onDelete('restrict');
         });
     }
 
@@ -49,6 +49,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('reg_periksa', function (Blueprint $table) {
+            $table->dropForeign(['no_rkm_medis']);
+        });
+
         Schema::dropIfExists('pasien');
     }
 };
