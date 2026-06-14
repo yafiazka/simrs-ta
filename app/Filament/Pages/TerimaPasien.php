@@ -63,6 +63,7 @@ class TerimaPasien extends Page implements HasForms
                 'cara_keluar' => $resume->cara_keluar,
                 'tgl_keluar' => $resume->tgl_keluar?->toDateString() ?? $this->record->tgl_registrasi?->toDateString() ?? now()->toDateString(),
                 'instruksi' => $resume->instruksi,
+                'catatan_medis' => $resume->catatan_medis,
                 'resep_obat' => $resume->resepObats->map(fn($o) => [
                     'nama_obat' => $o->nama_obat,
                     'jumlah_obat' => $o->jumlah_obat,
@@ -84,6 +85,7 @@ class TerimaPasien extends Page implements HasForms
                 'tgl_keluar' => $this->record->tgl_registrasi?->toDateString() ?? now()->toDateString(),
                 'resep_obat' => [],
                 'instruksi' => null,
+                'catatan_medis' => null,
             ]);
         }
     }
@@ -150,6 +152,9 @@ class TerimaPasien extends Page implements HasForms
                                 'sm' => 2,
                                 'md' => 4,
                             ]),
+                        Textarea::make('catatan_medis')
+                            ->label('Catatan Medis')
+                            ->rows(3),
                     ]),
 
                 Section::make('Diagnosa & Tindakan')
@@ -238,6 +243,7 @@ class TerimaPasien extends Page implements HasForms
             $resume->diagnosa_utama = $data['diagnosa_utama'];
             $resume->cara_keluar = $data['cara_keluar'] ?? null;
             $resume->instruksi = $data['instruksi'] ?? null;
+            $resume->catatan_medis = $data['catatan_medis'] ?? null;
             
             $resume->pemeriksaan_fisik = '-';
             $resume->diagnosa_masuk = '-';

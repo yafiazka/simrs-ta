@@ -18,7 +18,8 @@ class ResumeMedis extends Model
         'diagnosa_utama', 'diagnosa_sekunder', 'tindakan_prosedur', 
         'terapi_pulang', 'alergi_obat', 'kondisi_pulang', 'rencana_lanjut', 
         'ringkasan_riwayat', 'hasil_penunjang', 'cara_keluar',
-        'tensi', 'tb', 'bb', 'respirasi', 'gcs', 'nadi', 'suhu', 'spo2', 'instruksi'
+        'tensi', 'tb', 'bb', 'respirasi', 'gcs', 'nadi', 'suhu', 'spo2', 'instruksi',
+        'catatan_medis'
     ];
 
     public function dokter(): BelongsTo

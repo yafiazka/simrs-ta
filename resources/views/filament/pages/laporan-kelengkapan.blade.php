@@ -40,6 +40,7 @@
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">UMUR</th>
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">STATUS SOSIAL</th>
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">DX</th>
+                            <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">CATATAN MEDIS</th>
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">DESA</th>
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">KECAMATAN</th>
                             <th class="px-3 py-3 text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">KABUPATEN/KOTA</th>
@@ -73,6 +74,9 @@
                                     @else
                                         -
                                     @endif
+                                </td>
+                                <td class="px-3 py-3 text-sm text-gray-900 dark:text-white max-w-xs truncate" title="{{ $row->resumeMedis?->catatan_medis ?? '-' }}">
+                                    {{ $row->resumeMedis?->catatan_medis ?? '-' }}
                                 </td>
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-white">{{ $row->pasien?->kelurahan ?? $row->pasien?->desa ?? '-' }}</td>
                                 <td class="px-3 py-3 text-sm text-gray-900 dark:text-white">{{ $row->pasien?->kecamatan ?? '-' }}</td>
@@ -111,7 +115,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="17" class="px-4 py-10 text-center text-sm text-gray-400 dark:text-gray-500 italic">
+                                <td colspan="18" class="px-4 py-10 text-center text-sm text-gray-400 dark:text-gray-500 italic">
                                     Tidak ada data kunjungan untuk periode ini.
                                 </td>
                             </tr>
@@ -119,7 +123,7 @@
 
                         @if ($detailed->isNotEmpty() && $detailed->count() >= $this->perPage)
                             <tr x-intersect="$wire.loadMore()" wire:key="loader-row-{{ $this->perPage }}" class="border-t border-gray-200 dark:border-white/5">
-                                <td colspan="17" class="px-3 py-4 text-center">
+                                <td colspan="18" class="px-3 py-4 text-center">
                                     <div class="inline-flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                                         <svg class="animate-spin h-5 w-5 text-primary-600 dark:text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

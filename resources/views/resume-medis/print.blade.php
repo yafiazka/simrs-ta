@@ -168,6 +168,11 @@
     </div>
 
     <div style="margin-top: 10px; color: #000;">
+        <strong style="display: block; margin-bottom: 4px;">Catatan Medis:</strong>
+        <div style="background: #ffffff; border: 1px solid #999; padding: 6px 8px; border-radius: 4px; min-height: 30px; white-space: pre-line; color: #000;">{{ $resume->catatan_medis ?: '-' }}</div>
+    </div>
+
+    <div style="margin-top: 10px; color: #000;">
         <strong style="display: block; margin-bottom: 4px;">Diagnosa Utama (ICD-10):</strong>
         <div style="background: #ffffff; border: 1px solid #999; padding: 6px 8px; border-radius: 4px; font-weight: bold; color: #000;">
             [{{ $resume->diagnosa_utama }}] {{ $resume->diagnosaUtamaPenyakit?->nm_penyakit ?? 'Diagnosa tidak ditemukan' }}

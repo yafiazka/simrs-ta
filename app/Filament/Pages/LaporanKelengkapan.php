@@ -136,7 +136,7 @@ class LaporanKelengkapan extends Page implements HasForms
         // Headers
         $headers = [
             'NO', 'RUANGAN', 'NAMA PASIEN', 'CM', 'NIK', 'UMUR', 'STATUS SOSIAL', 
-            'DX', 'DESA', 'KECAMATAN', 'KABUPATEN/KOTA', 'PENDIDIKAN', 'PEKERJAAN', 
+            'DX', 'CATATAN MEDIS', 'DESA', 'KECAMATAN', 'KABUPATEN/KOTA', 'PENDIDIKAN', 'PEKERJAAN', 
             'TGL MASUK', 'DPJP', 'TGL PULANG', 'CARA PULANG'
         ];
 
@@ -145,7 +145,7 @@ class LaporanKelengkapan extends Page implements HasForms
             $sheet->setCellValue($colLetter . '1', $header);
         }
 
-        $sheet->getStyle('A1:Q1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A1:R1')->applyFromArray($headerStyle);
         $sheet->getRowDimension('1')->setRowHeight(28);
 
         // Data Row Style
@@ -175,6 +175,7 @@ class LaporanKelengkapan extends Page implements HasForms
             $umur = "{$row->umurdaftar} {$row->sttsumur}";
             $status_sosial = $row->penjab->png_jawab ?? '-';
             $dx = $row->resumeMedis ? '[' . $row->resumeMedis->diagnosa_utama . '] ' . ($row->resumeMedis->diagnosaUtamaPenyakit->nm_penyakit ?? '') : '-';
+            $catatan_medis = $row->resumeMedis ? ($row->resumeMedis->catatan_medis ?? '-') : '-';
             $desa = $row->pasien?->kelurahan ?? $row->pasien?->desa ?? '-';
             $tgl_masuk = $row->tgl_registrasi ? $row->tgl_registrasi->format('d/m/Y') : '-';
             $tgl_pulang = $row->resumeMedis && $row->resumeMedis->tgl_keluar ? $row->resumeMedis->tgl_keluar->format('d/m/Y') : '-';
@@ -196,18 +197,19 @@ class LaporanKelengkapan extends Page implements HasForms
             $sheet->setCellValue('F' . $rowNum, $umur);
             $sheet->setCellValue('G' . $rowNum, $status_sosial);
             $sheet->setCellValue('H' . $rowNum, $dx);
-            $sheet->setCellValue('I' . $rowNum, $desa);
-            $sheet->setCellValue('J' . $rowNum, $row->pasien?->kecamatan ?? '-');
-            $sheet->setCellValue('K' . $rowNum, $row->pasien?->kabupaten ?? '-');
-            $sheet->setCellValue('L' . $rowNum, $row->pasien?->pnd ?? '-');
-            $sheet->setCellValue('M' . $rowNum, $row->pasien?->pekerjaan ?? '-');
-            $sheet->setCellValue('N' . $rowNum, $tgl_masuk);
-            $sheet->setCellValue('O' . $rowNum, $row->dokter->nm_dokter ?? '-');
-            $sheet->setCellValue('P' . $rowNum, $tgl_pulang);
-            $sheet->setCellValue('Q' . $rowNum, $cara_pulang);
+            $sheet->setCellValue('I' . $rowNum, $catatan_medis);
+            $sheet->setCellValue('J' . $rowNum, $desa);
+            $sheet->setCellValue('K' . $rowNum, $row->pasien?->kecamatan ?? '-');
+            $sheet->setCellValue('L' . $rowNum, $row->pasien?->kabupaten ?? '-');
+            $sheet->setCellValue('M' . $rowNum, $row->pasien?->pnd ?? '-');
+            $sheet->setCellValue('N' . $rowNum, $row->pasien?->pekerjaan ?? '-');
+            $sheet->setCellValue('O' . $rowNum, $tgl_masuk);
+            $sheet->setCellValue('P' . $rowNum, $row->dokter->nm_dokter ?? '-');
+            $sheet->setCellValue('Q' . $rowNum, $tgl_pulang);
+            $sheet->setCellValue('R' . $rowNum, $cara_pulang);
 
-            // Apply light blue style to DPJP column (Column O is the 15th column)
-            $sheet->getStyle('O' . $rowNum)->applyFromArray($dpjpStyle);
+            // Apply light blue style to DPJP column (Column P is the 16th column)
+            $sheet->getStyle('P' . $rowNum)->applyFromArray($dpjpStyle);
 
             $sheet->getRowDimension($rowNum)->setRowHeight(22);
             $rowNum++;
@@ -215,12 +217,12 @@ class LaporanKelengkapan extends Page implements HasForms
 
         // Apply borders to all data cells
         if ($rowNum > 2) {
-            $sheet->getStyle('A2:Q' . ($rowNum - 1))->applyFromArray($borderStyle);
+            $sheet->getStyle('A2:R' . ($rowNum - 1))->applyFromArray($borderStyle);
             // Center align NO, CM, NIK, TGL, CARA PULANG
             $sheet->getStyle('A2:A' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
             $sheet->getStyle('D2:E' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('N2:N' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('P2:Q' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('O2:O' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('Q2:R' . ($rowNum - 1))->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
         }
 
         // Set column widths explicitly
@@ -233,15 +235,16 @@ class LaporanKelengkapan extends Page implements HasForms
             'F' => 10,
             'G' => 18,
             'H' => 35,
-            'I' => 18,
+            'I' => 35, // CATATAN MEDIS
             'J' => 18,
-            'K' => 20,
-            'L' => 15,
+            'K' => 18,
+            'L' => 20,
             'M' => 15,
             'N' => 15,
-            'O' => 25, // DPJP
-            'P' => 15,
+            'O' => 15,
+            'P' => 25, // DPJP
             'Q' => 15,
+            'R' => 15,
         ];
 
         foreach ($widths as $col => $width) {

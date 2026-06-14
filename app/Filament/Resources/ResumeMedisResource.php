@@ -124,6 +124,9 @@ class ResumeMedisResource extends Resource
                             )),
                         Forms\Components\TextInput::make('cara_keluar')
                             ->label('Cara Dipulangkan'),
+                        Forms\Components\Textarea::make('catatan_medis')
+                            ->label('Catatan Medis')
+                            ->columnSpanFull(),
                         Forms\Components\Textarea::make('instruksi')
                             ->label('Instruksi Medis')
                             ->columnSpanFull(),
@@ -170,6 +173,11 @@ class ResumeMedisResource extends Resource
                 Tables\Columns\TextColumn::make('diagnosaUtamaPenyakit.nm_penyakit')
                     ->label('Diagnosa Utama (ICD-10)')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('catatan_medis')
+                    ->label('Catatan Medis')
+                    ->searchable()
+                    ->limit(50)
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('cara_keluar')
                     ->label('Tindak Lanjut')
                     ->badge()
